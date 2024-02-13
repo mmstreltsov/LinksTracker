@@ -18,9 +18,14 @@ public class LinkParserServiceImpl implements LinkParserService {
 
     @Override
     public String getResponseFromAnyHost(String link) {
-        return parsers.stream()
-                .map(it -> it.getInfo(link))
-                .filter(Objects::nonNull)
-                .findAny().orElse(null);
+        for (LinkParser linkParser : parsers) {
+            try {
+                String info = linkParser.getInfo(link);
+                if (Objects.nonNull(info)) {
+                    return info;
+                }
+            } catch (Exception ignored) {}
+        }
+        return null;
     }
 }
