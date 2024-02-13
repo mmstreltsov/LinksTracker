@@ -1,0 +1,2 @@
+bot.BotApplication=org.springframework.stereotype.Component,org.springframework.boot.SpringBootConfiguration
+configuration.ApplicationConfig=org.springframework.boot.context.properties.ConfigurationProperties

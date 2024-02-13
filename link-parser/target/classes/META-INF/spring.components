@@ -1,0 +1,3 @@
+ru.tinkoff.service.impl.LinkParserServiceImpl=org.springframework.stereotype.Component
+ru.tinkoff.utils.impl.GithubLinkParser=org.springframework.stereotype.Component
+ru.tinkoff.utils.impl.StackoverflowLinkParser=org.springframework.stereotype.Component
