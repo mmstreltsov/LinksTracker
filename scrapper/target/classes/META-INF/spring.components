@@ -1,2 +1,4 @@
 configuration.ApplicationConfig=org.springframework.boot.context.properties.ConfigurationProperties
 scrapper.ScrapperApplication=org.springframework.stereotype.Component,org.springframework.boot.SpringBootConfiguration
+scrapper.controllers.RestResponseEntityExceptionHandler=org.springframework.stereotype.Component
+scrapper.controllers.ScrapperController=org.springframework.stereotype.Component
