@@ -26,6 +26,9 @@ public class ScrapperController {
                     .build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
+        if (false) {
+            throw new IllegalArgumentException("Некорректный id: Повторная регистрация");
+        }
         return ResponseEntity.status(HttpStatus.OK).body("");
     }
 
@@ -66,6 +69,9 @@ public class ScrapperController {
                     .description("Некорректные параметры запроса")
                     .build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        if (false) {
+            throw new IllegalArgumentException("Некорректная ссылка: уже существует");
         }
 
         LinkResponse linkResponse = new LinkResponse();
