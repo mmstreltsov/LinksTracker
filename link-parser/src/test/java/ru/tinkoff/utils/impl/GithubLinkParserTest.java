@@ -19,7 +19,7 @@ class GithubLinkParserTest {
         String link = "https://github.com/mmstreltsov/tinkoff_java_backend";
 
         String actual = LinkParser.getInfo(link);
-        String excepted = "mmstreltsov:tinkoff_java_backend";
+        String excepted = "mmstreltsov/tinkoff_java_backend";
         Assertions.assertEquals(excepted, actual);
     }
 

@@ -1,3 +1,4 @@
+/home/mestreltsov/IdeaProjects/tinkoff_java_backend/link-parser/src/main/java/ru/tinkoff/configuration/LinkParserConfiguration.java
 /home/mestreltsov/IdeaProjects/tinkoff_java_backend/link-parser/src/main/java/ru/tinkoff/service/LinkParserService.java
 /home/mestreltsov/IdeaProjects/tinkoff_java_backend/link-parser/src/main/java/ru/tinkoff/service/impl/LinkParserServiceImpl.java
 /home/mestreltsov/IdeaProjects/tinkoff_java_backend/link-parser/src/main/java/ru/tinkoff/utils/LinkHandlerForParser.java

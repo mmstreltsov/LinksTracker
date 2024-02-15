@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
-import scrapper.dto.AddLinkRequest;
-import scrapper.dto.ApiErrorResponse;
-import scrapper.dto.LinkResponse;
-import scrapper.dto.ListLinksResponse;
-import scrapper.dto.RemoveLinkRequest;
+import scrapper.controllers.dto.AddLinkRequest;
+import scrapper.controllers.dto.ApiErrorResponse;
+import scrapper.controllers.dto.LinkResponse;
+import scrapper.controllers.dto.ListLinksResponse;
+import scrapper.controllers.dto.RemoveLinkRequest;
 
 @RestController
 public class ScrapperController {

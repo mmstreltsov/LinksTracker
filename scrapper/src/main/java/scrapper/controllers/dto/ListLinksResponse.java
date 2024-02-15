@@ -1,4 +1,4 @@
-package scrapper.dto;
+package scrapper.controllers.dto;
 
 import java.util.List;
 

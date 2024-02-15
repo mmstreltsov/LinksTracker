@@ -19,6 +19,6 @@ public class GithubLinkParser extends LinkHandlerForParser implements LinkParser
         }
 
         String user = pathNodes[1], repository = pathNodes[2];
-        return user + ":" + repository;
+        return user + "/" + repository;
     }
 }
