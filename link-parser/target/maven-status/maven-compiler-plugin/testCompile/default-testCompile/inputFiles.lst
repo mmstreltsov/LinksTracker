@@ -1,0 +1,3 @@
+/home/mestreltsov/IdeaProjects/tinkoff_java_backend/link-parser/src/test/java/ru/tinkoff/service/impl/LinkParserServiceImplTest.java
+/home/mestreltsov/IdeaProjects/tinkoff_java_backend/link-parser/src/test/java/ru/tinkoff/utils/impl/GithubLinkParserTest.java
+/home/mestreltsov/IdeaProjects/tinkoff_java_backend/link-parser/src/test/java/ru/tinkoff/utils/impl/StackoverflowLinkParserTest.java

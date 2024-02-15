@@ -1,8 +1,8 @@
 package ru.tinkoff.utils.impl;
 
 import org.springframework.stereotype.Component;
-import ru.tinkoff.utils.LinkParser;
 import ru.tinkoff.utils.LinkHandlerForParser;
+import ru.tinkoff.utils.LinkParser;
 
 @Component
 public class StackoverflowLinkParser extends LinkHandlerForParser implements LinkParser {
