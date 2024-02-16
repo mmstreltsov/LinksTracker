@@ -8,6 +8,11 @@
   ],
   "properties": [
     {
+      "name": "app.scheduler",
+      "type": "configuration.utils.Scheduler",
+      "sourceType": "configuration.ApplicationConfig"
+    },
+    {
       "name": "app.test",
       "type": "java.lang.String",
       "sourceType": "configuration.ApplicationConfig"

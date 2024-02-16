@@ -1,6 +1,7 @@
 package ru.tinkoff.service.impl;
 
 import org.springframework.stereotype.Service;
+import ru.tinkoff.dto.LinkParserServiceResponse;
 import ru.tinkoff.service.LinkParserService;
 import ru.tinkoff.utils.LinkParser;
 
@@ -17,10 +18,10 @@ public class LinkParserServiceImpl implements LinkParserService {
     }
 
     @Override
-    public String getResponseFromAnyHost(String link) {
+    public LinkParserServiceResponse getResponseFromAnyHost(String link) {
         for (LinkParser linkParser : parsers) {
             try {
-                String info = linkParser.getInfo(link);
+                LinkParserServiceResponse info = linkParser.getInfo(link);
                 if (Objects.nonNull(info)) {
                     return info;
                 }

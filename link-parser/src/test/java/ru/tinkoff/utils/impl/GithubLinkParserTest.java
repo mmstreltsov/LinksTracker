@@ -3,6 +3,7 @@ package ru.tinkoff.utils.impl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.tinkoff.dto.LinkParserServiceResponse;
 import ru.tinkoff.utils.LinkParser;
 
 
@@ -15,11 +16,23 @@ class GithubLinkParserTest {
     }
 
     @Test
+    void checkHostNameInResponseIsValid() {
+        String link = "https://github.com/mmstreltsov/ahahahaha";
+
+        LinkParserServiceResponse response = LinkParser.getInfo(link);
+
+        String actual = response.service;
+        String excepted = "github.com";
+        Assertions.assertEquals(excepted, actual);
+    }
+    @Test
     void getValidResponse() {
         String link = "https://github.com/mmstreltsov/tinkoff_java_backend";
 
-        String actual = LinkParser.getInfo(link);
-        String excepted = "mmstreltsov:tinkoff_java_backend";
+        LinkParserServiceResponse response = LinkParser.getInfo(link);
+
+        String actual = response.value;
+        String excepted = "mmstreltsov/tinkoff_java_backend";
         Assertions.assertEquals(excepted, actual);
     }
 
@@ -27,17 +40,17 @@ class GithubLinkParserTest {
     void getNullWhenInvalidHostname() {
         String link = "https://AAAAAAAAA.com/mmstreltsov/tinkoff_java_backend";
 
-        String actual = LinkParser.getInfo(link);
-        String excepted = null;
-        Assertions.assertEquals(excepted, actual);
+        LinkParserServiceResponse response = LinkParser.getInfo(link);
+
+        Assertions.assertNull(response);
     }
 
     @Test
     void getNullWhenThereIsNoRepository() {
         String link = "https://github.com/mmstreltsov";
 
-        String actual = LinkParser.getInfo(link);
-        String excepted = null;
-        Assertions.assertEquals(excepted, actual);
+        LinkParserServiceResponse response = LinkParser.getInfo(link);
+
+        Assertions.assertNull(response);
     }
 }

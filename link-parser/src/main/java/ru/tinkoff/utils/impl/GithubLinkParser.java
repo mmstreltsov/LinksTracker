@@ -1,15 +1,19 @@
 package ru.tinkoff.utils.impl;
 
 import org.springframework.stereotype.Component;
-import ru.tinkoff.utils.LinkParser;
+import ru.tinkoff.dto.LinkParserServiceResponse;
 import ru.tinkoff.utils.LinkHandlerForParser;
+import ru.tinkoff.utils.LinkParser;
+import ru.tinkoff.utils.ServiceNames;
 
 @Component
 public class GithubLinkParser extends LinkHandlerForParser implements LinkParser {
 
+    private final String SERVICE_NAME = ServiceNames.GITHUB.hostName;
+
     @Override
-    public String getInfoFromHostAndPath(String hostname, String pathname) {
-        if (!"Github.com".equalsIgnoreCase(hostname)) {
+    public LinkParserServiceResponse getInfoFromHostAndPath(String hostname, String pathname) {
+        if (!SERVICE_NAME.equalsIgnoreCase(hostname)) {
             return null;
         }
 
@@ -19,6 +23,10 @@ public class GithubLinkParser extends LinkHandlerForParser implements LinkParser
         }
 
         String user = pathNodes[1], repository = pathNodes[2];
-        return user + ":" + repository;
+        String value = user + "/" + repository;
+        return LinkParserServiceResponse.builder()
+                .service(SERVICE_NAME)
+                .value(value)
+                .build();
     }
 }
