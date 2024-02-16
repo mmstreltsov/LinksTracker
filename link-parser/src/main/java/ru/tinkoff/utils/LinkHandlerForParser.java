@@ -1,12 +1,13 @@
 package ru.tinkoff.utils;
 
+import ru.tinkoff.dto.LinkParserServiceResponse;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
 public abstract class LinkHandlerForParser implements LinkParser {
-
     @Override
-    public String getInfo(String link) {
+    public LinkParserServiceResponse getInfo(String link) {
         URL url;
         try {
             url = new URL(link);
@@ -17,5 +18,5 @@ public abstract class LinkHandlerForParser implements LinkParser {
         return getInfoFromHostAndPath(url.getHost(), url.getPath());
     }
 
-    public abstract String getInfoFromHostAndPath(String hostname, String pathname);
+    public abstract LinkParserServiceResponse getInfoFromHostAndPath(String hostname, String pathname);
 }

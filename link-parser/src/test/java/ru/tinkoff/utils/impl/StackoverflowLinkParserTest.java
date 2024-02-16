@@ -3,6 +3,7 @@ package ru.tinkoff.utils.impl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.tinkoff.dto.LinkParserServiceResponse;
 import ru.tinkoff.utils.LinkParser;
 
 class StackoverflowLinkParserTest {
@@ -13,11 +14,25 @@ class StackoverflowLinkParserTest {
         LinkParser = new StackoverflowLinkParser();
     }
 
+
+    @Test
+    void checkHostNameInResponseIsValid() {
+        String link = "https://stackoverflow.com/questions/7777777";
+
+        LinkParserServiceResponse response = LinkParser.getInfo(link);
+
+        String actual = response.service;
+        String excepted = "stackoverflow.com";
+        Assertions.assertEquals(excepted, actual);
+    }
+
     @Test
     void getValidResponse() {
         String link = "https://stackoverflow.com/questions/1642028/what-is-the-operator-in-c";
 
-        String actual = LinkParser.getInfo(link);
+        LinkParserServiceResponse response = LinkParser.getInfo(link);
+
+        String actual = response.value;
         String excepted = "1642028";
         Assertions.assertEquals(excepted, actual);
     }
@@ -26,17 +41,17 @@ class StackoverflowLinkParserTest {
     void getNullWhenInvalidHostname() {
         String link = "https://AAAAAAAAA.com/questions/1642028/what-is-the-operator-in-c";
 
-        String actual = LinkParser.getInfo(link);
-        String excepted = null;
-        Assertions.assertEquals(excepted, actual);
+        LinkParserServiceResponse response = LinkParser.getInfo(link);
+
+        Assertions.assertNull(response);
     }
 
     @Test
     void getNullWhenThereIsNoId() {
         String link = "https://stackoverflow.com/search?q=unsupported%20link";
 
-        String actual = LinkParser.getInfo(link);
-        String excepted = null;
-        Assertions.assertEquals(excepted, actual);
+        LinkParserServiceResponse response = LinkParser.getInfo(link);
+
+        Assertions.assertNull(response);
     }
 }

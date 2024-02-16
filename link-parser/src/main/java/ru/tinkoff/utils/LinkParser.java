@@ -1,5 +1,7 @@
 package ru.tinkoff.utils;
 
+import ru.tinkoff.dto.LinkParserServiceResponse;
+
 public interface LinkParser {
-    String getInfo(String url);
+    LinkParserServiceResponse getInfo(String url);
 }
