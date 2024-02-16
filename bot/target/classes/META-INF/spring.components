@@ -1,4 +1,0 @@
-bot.BotApplication=org.springframework.stereotype.Component,org.springframework.boot.SpringBootConfiguration
-bot.controller.BotController=org.springframework.stereotype.Component
-bot.controller.RestResponseEntityExceptionHandler=org.springframework.stereotype.Component
-configuration.ApplicationConfig=org.springframework.boot.context.properties.ConfigurationProperties

@@ -1,9 +1,0 @@
-/home/mestreltsov/IdeaProjects/tinkoff_java_backend/link-parser/src/main/java/ru/tinkoff/configuration/LinkParserConfiguration.java
-/home/mestreltsov/IdeaProjects/tinkoff_java_backend/link-parser/src/main/java/ru/tinkoff/dto/LinkParserServiceResponse.java
-/home/mestreltsov/IdeaProjects/tinkoff_java_backend/link-parser/src/main/java/ru/tinkoff/service/LinkParserService.java
-/home/mestreltsov/IdeaProjects/tinkoff_java_backend/link-parser/src/main/java/ru/tinkoff/service/impl/LinkParserServiceImpl.java
-/home/mestreltsov/IdeaProjects/tinkoff_java_backend/link-parser/src/main/java/ru/tinkoff/utils/LinkHandlerForParser.java
-/home/mestreltsov/IdeaProjects/tinkoff_java_backend/link-parser/src/main/java/ru/tinkoff/utils/LinkParser.java
-/home/mestreltsov/IdeaProjects/tinkoff_java_backend/link-parser/src/main/java/ru/tinkoff/utils/impl/GithubLinkParser.java
-/home/mestreltsov/IdeaProjects/tinkoff_java_backend/link-parser/src/main/java/ru/tinkoff/utils/impl/ServiceNames.java
-/home/mestreltsov/IdeaProjects/tinkoff_java_backend/link-parser/src/main/java/ru/tinkoff/utils/impl/StackoverflowLinkParser.java
