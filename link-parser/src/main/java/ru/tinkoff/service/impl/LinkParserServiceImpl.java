@@ -7,6 +7,7 @@ import ru.tinkoff.utils.LinkParser;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class LinkParserServiceImpl implements LinkParserService {
@@ -18,15 +19,15 @@ public class LinkParserServiceImpl implements LinkParserService {
     }
 
     @Override
-    public LinkParserServiceResponse getResponseFromAnyHost(String link) {
+    public Optional<LinkParserServiceResponse> getResponseFromAnyHost(String link) {
         for (LinkParser linkParser : parsers) {
             try {
                 LinkParserServiceResponse info = linkParser.getInfo(link);
                 if (Objects.nonNull(info)) {
-                    return info;
+                    return Optional.of(info);
                 }
             } catch (Exception ignored) {}
         }
-        return null;
+        return Optional.empty();
     }
 }
