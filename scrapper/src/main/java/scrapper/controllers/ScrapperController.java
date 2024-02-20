@@ -74,11 +74,11 @@ public class ScrapperController {
             throw new IllegalArgumentException("Некорректная ссылка: уже существует");
         }
 
-        LinkResponse linkResponse = new LinkResponse();
+        LinkResponse linkResponse = new LinkResponse(chatId, request.link);
         return ResponseEntity.status(HttpStatus.OK).body(linkResponse);
     }
 
-    @DeleteMapping("/links")
+    @PostMapping("/links/delete")
     public ResponseEntity<Object> removeLink(@RequestHeader("Tg-Chat-Id") Long chatId, @RequestBody RemoveLinkRequest request) {
         if (false) {
             ApiErrorResponse response = ApiErrorResponse.builder()
@@ -93,7 +93,7 @@ public class ScrapperController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
 
-        LinkResponse linkResponse = new LinkResponse();
+        LinkResponse linkResponse = new LinkResponse(chatId, request.link);
         return ResponseEntity.status(HttpStatus.OK).body(linkResponse);
     }
 }
