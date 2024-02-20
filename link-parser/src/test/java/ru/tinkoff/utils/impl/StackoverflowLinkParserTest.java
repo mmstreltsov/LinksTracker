@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import ru.tinkoff.dto.LinkParserServiceResponse;
 import ru.tinkoff.utils.LinkParser;
 
+import java.util.Optional;
+
 class StackoverflowLinkParserTest {
     private LinkParser LinkParser;
 
@@ -19,9 +21,10 @@ class StackoverflowLinkParserTest {
     void checkHostNameInResponseIsValid() {
         String link = "https://stackoverflow.com/questions/7777777";
 
-        LinkParserServiceResponse response = LinkParser.getInfo(link);
+        Optional<LinkParserServiceResponse> response = LinkParser.getInfo(link);
+        Assertions.assertTrue(response.isPresent());
 
-        String actual = response.service;
+        String actual = response.get().service();
         String excepted = "stackoverflow.com";
         Assertions.assertEquals(excepted, actual);
     }
@@ -30,9 +33,10 @@ class StackoverflowLinkParserTest {
     void getValidResponse() {
         String link = "https://stackoverflow.com/questions/1642028/what-is-the-operator-in-c";
 
-        LinkParserServiceResponse response = LinkParser.getInfo(link);
+        Optional<LinkParserServiceResponse> response = LinkParser.getInfo(link);
+        Assertions.assertTrue(response.isPresent());
 
-        String actual = response.value;
+        String actual = response.get().value();
         String excepted = "1642028";
         Assertions.assertEquals(excepted, actual);
     }
@@ -41,17 +45,15 @@ class StackoverflowLinkParserTest {
     void getNullWhenInvalidHostname() {
         String link = "https://AAAAAAAAA.com/questions/1642028/what-is-the-operator-in-c";
 
-        LinkParserServiceResponse response = LinkParser.getInfo(link);
+        Optional<LinkParserServiceResponse> response = LinkParser.getInfo(link);
 
-        Assertions.assertNull(response);
+        Assertions.assertTrue(response.isEmpty());
     }
 
     @Test
     void getNullWhenThereIsNoId() {
         String link = "https://stackoverflow.com/search?q=unsupported%20link";
 
-        LinkParserServiceResponse response = LinkParser.getInfo(link);
-
-        Assertions.assertNull(response);
+        Assertions.assertThrows(IllegalStateException.class, () -> LinkParser.getInfo(link));
     }
 }

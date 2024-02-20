@@ -6,10 +6,13 @@ import org.junit.jupiter.api.Test;
 import ru.tinkoff.dto.LinkParserServiceResponse;
 import ru.tinkoff.utils.LinkParser;
 
+import java.util.Optional;
+
 
 class GithubLinkParserTest {
 
     private LinkParser LinkParser;
+
     @BeforeEach
     void init() {
         LinkParser = new GithubLinkParser();
@@ -19,19 +22,22 @@ class GithubLinkParserTest {
     void checkHostNameInResponseIsValid() {
         String link = "https://github.com/mmstreltsov/ahahahaha";
 
-        LinkParserServiceResponse response = LinkParser.getInfo(link);
+        Optional<LinkParserServiceResponse> response = LinkParser.getInfo(link);
+        Assertions.assertTrue(response.isPresent());
 
-        String actual = response.service;
+        String actual = response.get().service();
         String excepted = "github.com";
         Assertions.assertEquals(excepted, actual);
     }
+
     @Test
     void getValidResponse() {
         String link = "https://github.com/mmstreltsov/tinkoff_java_backend";
 
-        LinkParserServiceResponse response = LinkParser.getInfo(link);
+        Optional<LinkParserServiceResponse> response = LinkParser.getInfo(link);
+        Assertions.assertTrue(response.isPresent());
 
-        String actual = response.value;
+        String actual = response.get().value();
         String excepted = "mmstreltsov/tinkoff_java_backend";
         Assertions.assertEquals(excepted, actual);
     }
@@ -40,17 +46,15 @@ class GithubLinkParserTest {
     void getNullWhenInvalidHostname() {
         String link = "https://AAAAAAAAA.com/mmstreltsov/tinkoff_java_backend";
 
-        LinkParserServiceResponse response = LinkParser.getInfo(link);
+        Optional<LinkParserServiceResponse> response = LinkParser.getInfo(link);
 
-        Assertions.assertNull(response);
+        Assertions.assertTrue(response.isEmpty());
     }
 
     @Test
     void getNullWhenThereIsNoRepository() {
         String link = "https://github.com/mmstreltsov";
 
-        LinkParserServiceResponse response = LinkParser.getInfo(link);
-
-        Assertions.assertNull(response);
+        Assertions.assertThrows(IllegalStateException.class, () -> LinkParser.getInfo(link));
     }
 }
