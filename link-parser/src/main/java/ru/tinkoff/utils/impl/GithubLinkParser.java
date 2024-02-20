@@ -20,7 +20,7 @@ public class GithubLinkParser extends LinkHandlerForParser implements LinkParser
     }
 
     @Override
-    protected void setServiceNameFromChild() {
-        this.serviceName = ServiceNames.GITHUB;
+    protected String getServiceNameFromChild() {
+        return ServiceNames.GITHUB.hostName;
     }
 }

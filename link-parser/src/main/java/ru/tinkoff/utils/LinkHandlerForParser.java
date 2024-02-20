@@ -8,8 +8,6 @@ import java.util.Optional;
 
 public abstract class LinkHandlerForParser implements LinkParser {
 
-    protected ServiceNames serviceName;
-
     @Override
     public Optional<LinkParserServiceResponse> getInfo(String link) {
         URL url;
@@ -23,16 +21,16 @@ public abstract class LinkHandlerForParser implements LinkParser {
     }
 
     private Optional<LinkParserServiceResponse> getInfoFromHostAndPath(String hostname, String pathname) {
-        setServiceNameFromChild();
+        String serviceName = getServiceNameFromChild();
 
-        if (!serviceName.hostName.equalsIgnoreCase(hostname)) {
+        if (!serviceName.equalsIgnoreCase(hostname)) {
             return Optional.empty();
         }
 
         String value = getValueFromChild(hostname, pathname);
 
         LinkParserServiceResponse response = LinkParserServiceResponse.builder()
-                .service(serviceName.hostName)
+                .service(serviceName)
                 .value(value)
                 .build();
         return Optional.of(response);
@@ -40,5 +38,5 @@ public abstract class LinkHandlerForParser implements LinkParser {
 
     protected abstract String getValueFromChild(String hostname, String pathname);
 
-    protected abstract void setServiceNameFromChild();
+    protected abstract String getServiceNameFromChild();
 }

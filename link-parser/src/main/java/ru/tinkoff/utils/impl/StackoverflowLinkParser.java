@@ -19,7 +19,7 @@ public class StackoverflowLinkParser extends LinkHandlerForParser implements Lin
     }
 
     @Override
-    protected void setServiceNameFromChild() {
-        this.serviceName = ServiceNames.STACKOVERFLOW;
+    protected String getServiceNameFromChild() {
+        return ServiceNames.STACKOVERFLOW.hostName;
     }
 }
