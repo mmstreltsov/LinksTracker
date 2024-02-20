@@ -20,6 +20,7 @@ public class ListCommand implements Command {
 
     @Override
     public String handle(Update update) {
+        Long id = update.message().chat().id();
         return BotResponse.NO_TRACKED_LINKS.msg;
     }
 }

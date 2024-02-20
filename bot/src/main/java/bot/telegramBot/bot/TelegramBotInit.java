@@ -16,11 +16,11 @@ import java.util.Objects;
 
 @Slf4j
 @Service
-public class TelegramBotImpl {
+public class TelegramBotInit {
 
     private final TelegramBot bot;
 
-    public TelegramBotImpl(String telegramToken, List<Command> commands, CommandExecService commandExecService) {
+    public TelegramBotInit(String telegramToken, List<Command> commands, CommandExecService commandExecService) {
         this.bot = new TelegramBot(telegramToken);
 
         setMyCommands(commands);

@@ -13,7 +13,6 @@ public enum BotResponse {
 
     //List
     NO_TRACKED_LINKS("Unsuccessful: There is no any tracked links")
-
     ;
 
     public final String msg;
