@@ -2,10 +2,13 @@ package bot.telegramBot.bot;
 
 import bot.telegramBot.commands.Command;
 import bot.telegramBot.service.CommandExecService;
+import bot.telegramBot.service.ResponseFromCommand;
+import bot.telegramBot.service.impl.CommandExecServiceImpl;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.BotCommand;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SetMyCommands;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,6 +16,8 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
+import static bot.telegramBot.service.impl.CommandExecServiceImpl.*;
 
 @Slf4j
 @Service
@@ -42,7 +47,9 @@ public class TelegramBotInit {
     private void process(CommandExecService commandExecService, List<Update> updates) {
         updates.forEach(update -> {
             if (update.message() != null && update.message().text() != null) {
-                bot.execute(commandExecService.execCommand(update));
+                ResponseFromCommand response = commandExecService.execCommand(update);
+                SendMessage sendMessage = new SendMessage(response.id(), response.message());
+                bot.execute(sendMessage);
             }
         });
     }

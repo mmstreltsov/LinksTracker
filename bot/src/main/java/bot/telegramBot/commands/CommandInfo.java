@@ -3,6 +3,9 @@ package bot.telegramBot.commands;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Arrays;
+import java.util.stream.Stream;
+
 @Getter
 @AllArgsConstructor
 public enum CommandInfo {

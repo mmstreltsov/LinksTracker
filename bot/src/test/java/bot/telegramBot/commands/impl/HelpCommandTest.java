@@ -7,8 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Objects;
-
 class HelpCommandTest {
 
     private HelpCommand helpCommand;
@@ -21,7 +19,7 @@ class HelpCommandTest {
     }
 
     @Test
-    void testCommandName() {
+    void command_checkActualCommandName() {
         String expected = "/help";
         String actual = helpCommand.command();
 
@@ -29,8 +27,8 @@ class HelpCommandTest {
     }
 
     @Test
-    void testHandle() {
+    void handle_checkValidResponse() {
         String actual = helpCommand.handle(update);
-        Assertions.assertTrue(Objects.nonNull(actual) && actual.length() > 10);
+        Assertions.assertTrue(actual.contains("Supported commands"));
     }
 }

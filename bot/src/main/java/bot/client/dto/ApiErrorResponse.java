@@ -8,7 +8,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class ApiErrorResponse extends Exception {
+public class ApiErrorResponse extends RuntimeException {
     public String description;
     public String code;
     public String exceptionName;

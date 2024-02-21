@@ -2,23 +2,24 @@ package bot.telegramBot.service.impl;
 
 import bot.telegramBot.commands.Command;
 import bot.telegramBot.service.CommandExecService;
+import bot.telegramBot.service.ResponseFromCommand;
 import bot.telegramBot.utils.BotResponse;
-import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.SendMessage;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Slf4j
 @AllArgsConstructor
 public class CommandExecServiceImpl implements CommandExecService {
 
     private List<Command> commandList;
 
     @Override
-    public SendMessage execCommand(Update update) {
+    public ResponseFromCommand execCommand(Update update) {
         Long id = update.message().chat().id();
         try {
             String text = update.message().text();
@@ -30,13 +31,14 @@ public class CommandExecServiceImpl implements CommandExecService {
                 }
                 String response = cmd.handle(update);
 
-                return new SendMessage(id, response);
+                return new ResponseFromCommand(id, response);
             }
 
-            return new SendMessage(id, BotResponse.NOT_SUPPORTED_COMMAND.msg);
+            return new ResponseFromCommand(id, BotResponse.NOT_SUPPORTED_COMMAND.msg);
 
         } catch (Exception ex) {
-            return new SendMessage(id, BotResponse.SMTH_GONE_WRONG.msg + ": " +  ex.getMessage());
+            log.info("Bad request: id = " + id + ", error = " + ex.getMessage());
+            return new ResponseFromCommand(id, BotResponse.SMTH_GONE_WRONG.msg + ":\n" + ex.getMessage());
         }
     }
 }
