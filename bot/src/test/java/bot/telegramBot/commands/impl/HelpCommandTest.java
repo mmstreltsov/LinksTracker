@@ -30,7 +30,7 @@ class HelpCommandTest {
 
     @Test
     void testHandle() {
-        String actual = helpCommand.handle(null);
+        String actual = helpCommand.handle(update);
         Assertions.assertTrue(Objects.nonNull(actual) && actual.length() > 10);
     }
 }
