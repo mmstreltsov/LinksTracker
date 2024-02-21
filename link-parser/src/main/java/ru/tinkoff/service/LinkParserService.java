@@ -2,6 +2,8 @@ package ru.tinkoff.service;
 
 import ru.tinkoff.dto.LinkParserServiceResponse;
 
+import java.util.Optional;
+
 public interface LinkParserService {
-    LinkParserServiceResponse getResponseFromAnyHost(String link);
+    Optional<LinkParserServiceResponse> getResponseFromAnyHost(String link);
 }
