@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: /changeset/init/create-links-table.sql
+  - include:
+      file: /changeset/init/create-chat-table.sql
+  - include:
+      file: /changeset/init/create-chatToLinks-table.sql
