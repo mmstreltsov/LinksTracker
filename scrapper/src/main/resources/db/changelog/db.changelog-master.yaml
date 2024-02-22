@@ -5,3 +5,5 @@ databaseChangeLog:
       file: /changeset/init/create-chat-table.sql
   - include:
       file: /changeset/init/create-chatToLinks-table.sql
+  - include:
+      file: /changeset/v1/insert-data-22-02-2024.sql
