@@ -29,7 +29,8 @@ class CommandExecServiceImplTest {
     private Command pickCmdFromListByClass(Class<?> classImpl) {
         Command cmd = null;
         for (var c : commands) {
-            if (classImpl.equals(c.getClass())) {
+            var checkClass = Mockito.mock(classImpl).getClass();
+            if (checkClass.equals(c.getClass())) {
                 cmd = c;
                 break;
             }

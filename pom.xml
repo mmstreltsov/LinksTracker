@@ -83,7 +83,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-test</artifactId>
-                <version>2.5.0</version>
+                <version>${spring-boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -92,7 +92,8 @@
             <dependency>
                 <groupId>org.jetbrains</groupId>
                 <artifactId>annotations</artifactId>
-                <version>23.1.0</version>
+                <version>${jet-brains-annotation.version}></version>
+                <type>pom</type>
                 <scope>provided</scope>
             </dependency>
 
@@ -100,13 +101,26 @@
             <dependency>
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-                <version>2.0.2</version>
+                <version>${springdoc-openapi.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-engine</artifactId>
-                <version>5.9.1</version>
+                <version>${junit-jupiter-engine.version}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-params</artifactId>
+                <version>${junit-jupiter-engine.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${testcontainers.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -118,7 +132,12 @@
 
         <spring-cloud.version>2022.0.0</spring-cloud.version>
         <spring-boot.version>3.0.1</spring-boot.version>
+        <jet-brains-annotation.version>23.1.0</jet-brains-annotation.version>
+        <springdoc-openapi.version>2.0.2</springdoc-openapi.version>
         <maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
+        <junit-jupiter-engine.version>5.9.1</junit-jupiter-engine.version>
+        <spring-boot-starter.version>3.2.2</spring-boot-starter.version>
+        <testcontainers.version>1.19.0</testcontainers.version>
     </properties>
 
 </project>
