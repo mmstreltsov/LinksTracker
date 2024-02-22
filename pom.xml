@@ -115,6 +115,13 @@
                 <version>${junit-jupiter-engine.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${testcontainers.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -130,6 +137,7 @@
         <maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
         <junit-jupiter-engine.version>5.9.1</junit-jupiter-engine.version>
         <spring-boot-starter.version>3.2.2</spring-boot-starter.version>
+        <testcontainers.version>1.19.0</testcontainers.version>
     </properties>
 
 </project>
