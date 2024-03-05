@@ -37,7 +37,7 @@ abstract class AbstractContainerBaseTest {
     }
 }
 
-public class IntegrationEnvironment {
+public class IntegrationEnvironmentTest {
 
     @BeforeAll
     @SneakyThrows
@@ -46,7 +46,7 @@ public class IntegrationEnvironment {
 
         Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
 
-        Path pathToChangeLog = Path.of("db", "changelog", "db.changelog-master.yaml");
+        Path pathToChangeLog = Path.of("test","db", "changelog", "db.changelog-master.yaml");
         System.out.println(new File(pathToChangeLog.toString()).exists());
         Liquibase liquibase = new liquibase.Liquibase(pathToChangeLog.toString(), new ClassLoaderResourceAccessor(), database);
         liquibase.update(new Contexts(), new LabelExpression());
