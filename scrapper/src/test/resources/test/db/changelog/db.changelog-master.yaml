@@ -1,9 +1,0 @@
-databaseChangeLog:
-  - include:
-      file: db/changelog/changeset/init/create-links-table.sql
-  - include:
-      file: db/changelog/changeset/init/create-chat-table.sql
-  - include:
-      file: db/changelog/changeset/init/create-chatToLinks-table.sql
-  - include:
-      file: db/changelog/changeset/v1/insert-data-22-02-2024.sql
