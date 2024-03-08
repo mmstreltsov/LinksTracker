@@ -1,8 +1,8 @@
 --liquibase formatted sql
 --changeset mmstr:22.02.2024-insert-data
 
-insert into links
-values (1, 'ahahha'), (2, 'nonononon'), (3, 'gooooooooo');
+insert into links (url)
+values ('ahahha'), ('nonononon'), ('gooooooooo');
 
-insert into chat
-values (1, 15, 1), (2, 15, 2), (3, 15, 3);
+insert into chat (chat_id, link_id)
+values (15, 1), (15, 2), (15, 3);
