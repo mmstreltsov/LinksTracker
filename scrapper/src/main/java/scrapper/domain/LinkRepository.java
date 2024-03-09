@@ -10,4 +10,6 @@ public interface LinkRepository {
     void removeLink(Link link);
 
     List<Link> findAll();
+
+    Link findById(Long id);
 }

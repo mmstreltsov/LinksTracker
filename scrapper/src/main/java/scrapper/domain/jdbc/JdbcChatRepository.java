@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import scrapper.domain.ChatRepository;
 import scrapper.model.entity.Chat;
+import scrapper.model.entity.Link;
 
 import java.sql.PreparedStatement;
 import java.util.List;
@@ -22,7 +23,6 @@ public class JdbcChatRepository implements ChatRepository {
     private final JdbcTemplate jdbcTemplate;
 
     private final RowMapper<Chat> rowMapper = new DataClassRowMapper<>(Chat.class);
-
 
     @Override
     @Transactional
@@ -43,18 +43,38 @@ public class JdbcChatRepository implements ChatRepository {
     }
 
     @Override
-    @Transactional
     public void removeChat(Chat chat) {
         jdbcTemplate.update(
-                "DELETE FROM chat WHERE chat_id=(?);", chat.getChatId());
+                "DELETE FROM chat WHERE chat_id=(?);", chat.getChatId()
+        );
     }
 
     @Override
-    @Transactional
     public List<Chat> findAll() {
         return jdbcTemplate.query(
                 "SELECT * FROM chat;",
                 rowMapper
         );
+    }
+
+    @Override
+    public List<Chat> findAllByChatId(Long chatId) {
+        return jdbcTemplate.query(
+                "SELECT * FROM chat WHERE chat_id=(?);",
+                rowMapper,
+                chatId);
+    }
+
+    @Override
+    public List<Link> findAllLinksByChatId(Long chatId) {
+        String sqlQuery =
+                "WITH t AS (SELECT * FROM chat WHERE chat_id=(?)) " +
+                "SELECT DISTINCT -1 as id, l.url as url FROM links l " +
+                "INNER JOIN t " +
+                "ON t.link_id = l.id;";
+        return jdbcTemplate.query(
+                sqlQuery,
+                new DataClassRowMapper<>(Link.class),
+                chatId);
     }
 }

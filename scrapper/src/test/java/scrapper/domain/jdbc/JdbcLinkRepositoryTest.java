@@ -39,7 +39,7 @@ class JdbcLinkRepositoryTest {
         List<Link> prev = jdbcLinkRepository.findAll();
 
         Link link = Link.builder()
-                .url(new URI("ahaha"))
+                .url(URI.create("ahaha"))
                 .build();
 
         Long id = jdbcLinkRepository.addLinkAndGetID(link);
@@ -58,7 +58,7 @@ class JdbcLinkRepositoryTest {
     @Rollback
     void addLinkWithLinkAndGetID_testValidIdSetter() {
         Link link = Link.builder()
-                .url(new URI("ahaha"))
+                .url(URI.create("ahaha"))
                 .build();
 
         Long firstId = jdbcLinkRepository.addLinkAndGetID(link);
@@ -72,7 +72,7 @@ class JdbcLinkRepositoryTest {
     @Rollback
     void removeLink_testCorrectLogic() {
         Link link = Link.builder()
-                .url(new URI("ahaha"))
+                .url(URI.create("ahaha"))
                 .build();
 
         Long id = jdbcLinkRepository.addLinkAndGetID(link);
@@ -85,6 +85,26 @@ class JdbcLinkRepositoryTest {
         Assertions.assertAll(
                 () -> Assertions.assertFalse(post.contains(link)),
                 () -> Assertions.assertEquals(post.size(), prev.size() - 1)
+        );
+    }
+
+    @Test
+    @SneakyThrows
+    @Transactional
+    @Rollback
+    void findById_testCorrectLogic() {
+        Link link = Link.builder()
+                .url(URI.create("ahaha"))
+                .build();
+
+        Long id = jdbcLinkRepository.addLinkAndGetID(link);
+        link.setId(id);
+
+        Link actual = jdbcLinkRepository.findById(id);
+
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(link.getUrl(), actual.getUrl()),
+                () -> Assertions.assertEquals(link.getId(), actual.getId())
         );
     }
 }

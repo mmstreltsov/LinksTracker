@@ -21,7 +21,6 @@ public class JdbcLinkRepository implements LinkRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-
     private final RowMapper<Link> rowMapper = new DataClassRowMapper<>(Link.class);
 
     @Override
@@ -54,6 +53,16 @@ public class JdbcLinkRepository implements LinkRepository {
         return jdbcTemplate.query(
                 "SELECT * FROM links",
                 rowMapper
+        );
+    }
+
+    @Override
+    @Transactional
+    public Link findById(Long id) {
+        return jdbcTemplate.queryForObject(
+                "SELECT * FROM links WHERE id=(?)",
+                rowMapper,
+                id
         );
     }
 }

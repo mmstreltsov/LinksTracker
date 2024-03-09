@@ -1,7 +1,11 @@
 package bot.client.impl;
 
 import bot.client.ScrapperClient;
-import bot.client.dto.*;
+import bot.client.dto.AddLinkRequest;
+import bot.client.dto.ApiErrorResponse;
+import bot.client.dto.LinkResponse;
+import bot.client.dto.ListLinksResponse;
+import bot.client.dto.RemoveLinkRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -107,12 +111,8 @@ public class ScrapperClientImpl implements ScrapperClient {
     }
 
     private void handleBadResponse(ResponseEntity<?> response) {
-        handleBadResponse(response, new IllegalStateException("Invalid request"));
-    }
-
-    private void handleBadResponse(ResponseEntity<?> response, RuntimeException ex) {
         if (response == null || !response.getStatusCode().is2xxSuccessful()) {
-            throw ex;
+            throw new IllegalStateException("Invalid request");
         }
     }
 }
