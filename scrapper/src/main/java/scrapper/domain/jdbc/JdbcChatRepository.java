@@ -66,6 +66,11 @@ public class JdbcChatRepository implements ChatRepository {
     }
 
     @Override
+    public Chat findChatByChatIdAndLinkId(Long chatId, Long linkId) {
+        return null;
+    }
+
+    @Override
     public List<Link> findAllLinksByChatId(Long chatId) {
         String sqlQuery =
                 "WITH t AS (SELECT * FROM chat WHERE chat_id=(?)) " +

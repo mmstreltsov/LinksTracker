@@ -1,6 +1,7 @@
 package scrapper.controllers;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,7 +16,9 @@ import scrapper.controllers.dto.ApiErrorResponse;
 import scrapper.controllers.dto.LinkResponse;
 import scrapper.controllers.dto.ListLinksResponse;
 import scrapper.controllers.dto.RemoveLinkRequest;
-import scrapper.model.LinkStorageService;
+import scrapper.model.ChatService;
+import scrapper.model.LinkService;
+import scrapper.model.entity.Chat;
 import scrapper.model.entity.Link;
 
 import java.net.URI;
@@ -26,7 +29,8 @@ import java.util.Objects;
 @RestController
 public class ScrapperController {
 
-    private LinkStorageService linkStorageService;
+    private LinkService linkService;
+    private ChatService chatService;
 
     @PostMapping("/tg-chat/{id}")
     public ResponseEntity<Object> registerChat(@PathVariable("id") Long id) {
@@ -35,13 +39,13 @@ public class ScrapperController {
 
     @DeleteMapping("/tg-chat/{id}")
     public ResponseEntity<Object> deleteChat(@PathVariable("id") Long id) {
-        linkStorageService.removeUser(id);
+        chatService.removeUser(id);
         return ResponseEntity.status(HttpStatus.OK).body("");
     }
 
     @GetMapping("/links")
     public ResponseEntity<Object> getLinks(@RequestHeader("Tg-Chat-Id") Long chatId) {
-        List<Link> chats = linkStorageService.findAllLinksByChatId(chatId);
+        List<Link> chats = chatService.findAllLinksByChatId(chatId);
 
         List<LinkResponse> links = chats.stream()
                 .map(it -> new LinkResponse(it.getId(), it.getUrl().toString()))
@@ -60,13 +64,13 @@ public class ScrapperController {
 
     @PostMapping("/links")
     public ResponseEntity<Object> addLink(@RequestHeader("Tg-Chat-Id") Long chatId, @RequestBody AddLinkRequest request) {
-        boolean isLinkAlreadyTracked = linkStorageService.findAllLinksByChatId(chatId)
+        boolean isLinkAlreadyTracked = chatService.findAllLinksByChatId(chatId)
                 .stream().map(it -> it.getUrl().toString())
                 .anyMatch(it -> Objects.equals(it, request.link));
 
         if (isLinkAlreadyTracked) {
             ApiErrorResponse response = ApiErrorResponse.builder()
-                    .description("Некорректная ссылка: уже существует")
+                    .description("Link is already tracked")
                     .build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
@@ -74,8 +78,14 @@ public class ScrapperController {
         Link link = Link.builder()
                 .url(URI.create(request.link))
                 .build();
+        link = linkService.addLink(link);
 
-        link = linkStorageService.addLink(link);
+        Chat chat = Chat.builder()
+                .chatId(chatId)
+                .linkId(link.getId())
+                .build();
+
+        chatService.addUser(chat);
 
         LinkResponse linkResponse = new LinkResponse(chatId, link.getUrl().toString());
         return ResponseEntity.status(HttpStatus.OK).body(linkResponse);
@@ -83,24 +93,31 @@ public class ScrapperController {
 
     @PostMapping("/links/delete")
     public ResponseEntity<Object> removeLink(@RequestHeader("Tg-Chat-Id") Long chatId, @RequestBody RemoveLinkRequest request) {
-        boolean isLinkTracked = linkStorageService.findAllLinksByChatId(chatId)
-                .stream().map(it -> it.getUrl().toString())
-                .anyMatch(it -> Objects.equals(it, request.link));
+        List<Link> links = chatService.findAllLinksByChatId(chatId);
 
+        Link tracked = null;
+        for (Link it : links) {
+            if (!it.getUrl().toString().equals(request.link)) {
+                continue;
+            }
+            tracked = Link.builder()
+                    .id(it.getId())
+                    .url(it.getUrl())
+                    .build();
+        }
+
+        boolean isLinkTracked = Objects.nonNull(tracked);
         if (!isLinkTracked) {
             ApiErrorResponse response = ApiErrorResponse.builder()
-                    .description("Ссылка не найдена")
+                    .description("Link is not found")
                     .build();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
 
-        Link link = Link.builder()
-                .url(URI.create(request.link))
-                .build();
+        chatService.removeByChatIdAndLinkId(chatId, tracked.getId());
+        linkService.removeLink(tracked);
 
-        linkStorageService.removeLink(link);
-
-        LinkResponse linkResponse = new LinkResponse(chatId, link.getUrl().toString());
+        LinkResponse linkResponse = new LinkResponse(chatId, tracked.getUrl().toString());
         return ResponseEntity.status(HttpStatus.OK).body(linkResponse);
     }
 }

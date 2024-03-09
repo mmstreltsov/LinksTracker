@@ -5,19 +5,14 @@ import scrapper.model.entity.Link;
 
 import java.util.List;
 
-public interface LinkStorageService {
-
+public interface ChatService {
     Chat addUser(Chat chat);
-
-    Link addLink(Link link);
 
     void removeUser(Long chatId);
 
-    void removeLink(Link link);
+    void removeByChatIdAndLinkId(Long chatId, Long linkId);
 
     List<Chat> findAllChatsByChatId(Long id);
 
     List<Link> findAllLinksByChatId(Long id);
-
-    Link findLinkById(Long id);
 }
