@@ -15,9 +15,9 @@ public class BotApplication {
     public static void main(String[] args) throws Exception{
         var ctx = SpringApplication.run(BotApplication.class, args);
 
-
-        ScrapperClient client = ctx.getBean(ScrapperClient.class);
-
-        System.out.println(client.addLink(11L, new URI("aahahhahahah")));
+//
+//        ScrapperClient client = ctx.getBean(ScrapperClient.class);
+//
+//        System.out.println(client.addLink(11L, new URI("aahahhahahah")));
     }
 }
