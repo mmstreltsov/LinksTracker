@@ -1,5 +1,6 @@
 package scrapper.domain.jdbc;
 
+import dataBaseTests.IntegrationEnvironment;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ import java.net.URI;
 import java.util.List;
 
 @SpringBootTest
-class JdbcLinkRepositoryTest {
+class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     @Autowired
     private JdbcLinkRepository jdbcLinkRepository;
     @Autowired
