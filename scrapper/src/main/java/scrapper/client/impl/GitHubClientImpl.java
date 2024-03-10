@@ -30,8 +30,8 @@ class GitHubClientImpl implements GithubClient {
                 .header("Authorization", "Bearer " + token)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError, r -> r.bodyToMono(Exception.class))
-                .onStatus(HttpStatusCode::is5xxServerError, r -> r.bodyToMono(Exception.class))
+                .onStatus(HttpStatusCode::is4xxClientError, r -> r.bodyToMono(RuntimeException.class))
+                .onStatus(HttpStatusCode::is5xxServerError, r -> r.bodyToMono(RuntimeException.class))
                 .toEntity(GithubServiceUnitResponse[].class)
                 .block();
 

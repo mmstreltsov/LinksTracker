@@ -89,7 +89,7 @@ class JdbcChatRepositoryTest extends IntegrationEnvironment {
     @Test
     @Transactional
     @Rollback
-    void removeChat_testCorrectLogic() {
+    void removeEveryChatByChatId_testCorrectLogic() {
         initializeLinkObject();
         Chat chat = Chat.builder()
                 .chatId(-1L)
@@ -101,7 +101,7 @@ class JdbcChatRepositoryTest extends IntegrationEnvironment {
         }
 
         List<Chat> prev = jdbcChatRepository.findAll();
-        jdbcChatRepository.removeChat(chat);
+        jdbcChatRepository.removeEveryChatByChatId(chat);
         List<Chat> post = jdbcChatRepository.findAll();
 
         Assertions.assertEquals(prev.size() - count, post.size());

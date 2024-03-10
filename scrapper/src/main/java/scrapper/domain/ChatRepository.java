@@ -8,7 +8,9 @@ import java.util.List;
 public interface ChatRepository {
     Long addChatAndGetID(Chat chat);
 
-    void removeChat(Chat chat);
+    void removeChatById(Long id);
+
+    void removeEveryChatByChatId(Chat chat);
 
     List<Chat> findAll();
 

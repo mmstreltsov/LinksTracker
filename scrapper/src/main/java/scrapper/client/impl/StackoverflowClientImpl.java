@@ -26,8 +26,8 @@ public class StackoverflowClientImpl implements StackoverflowClient {
                 .uri("https://api.stackexchange.com/2.3/questions/" + id + "?site=stackoverflow")
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError, r -> r.bodyToMono(Exception.class))
-                .onStatus(HttpStatusCode::is5xxServerError, r -> r.bodyToMono(Exception.class))
+                .onStatus(HttpStatusCode::is4xxClientError, r -> r.bodyToMono(RuntimeException.class))
+                .onStatus(HttpStatusCode::is5xxServerError, r -> r.bodyToMono(RuntimeException.class))
                 .toEntity(StackoverflowServiceResponse.class)
                 .block();
 
