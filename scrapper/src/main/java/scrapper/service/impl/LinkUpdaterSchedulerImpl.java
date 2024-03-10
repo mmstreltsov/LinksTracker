@@ -16,7 +16,6 @@ import scrapper.service.LinkUpdaterScheduler;
 import scrapper.service.dto.LastUpdatedDTO;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -35,8 +34,9 @@ public class LinkUpdaterSchedulerImpl implements LinkUpdaterScheduler {
     private final ExecutorService executorService = Executors.newFixedThreadPool(8);
 
     private boolean isLinkUpdated(Link link, LastUpdatedDTO lastUpdatedDTO) {
-        return lastUpdatedDTO.getUpdatedAt()
-                .isAfter(link.getUpdatedAt().plusSeconds(3));
+        return false;
+        //        return lastUpdatedDTO.getUpdatedAt()
+//                .isAfter(link.getUpdatedAt().plusSeconds(3));
     }
 
     private Consumer<Link> action() {

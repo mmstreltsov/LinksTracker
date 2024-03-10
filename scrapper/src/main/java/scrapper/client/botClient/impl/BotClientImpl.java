@@ -26,6 +26,7 @@ public class BotClientImpl implements BotClient {
 
     @Override
     public void updateLink(List<Chat> chat, Link link) {
+        log.info("Trying to send request to Bot");
         LinkUpdateRequest linkUpdateRequest = LinkUpdateRequest.builder()
                 .tgChatIds(chat.stream().map(Chat::getChatId).toList())
                 .url(link.getUrl().toString())
@@ -44,5 +45,6 @@ public class BotClientImpl implements BotClient {
                 .onStatus(HttpStatusCode::is5xxServerError, r -> r.bodyToMono(ApiErrorResponse.class))
                 .toEntity(Object.class)
                 .block();
+        log.info("Sent request to Bot");
     }
 }
