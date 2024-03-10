@@ -1,11 +1,9 @@
 package ru.tinkoff.utils.impl;
 
-import org.springframework.stereotype.Component;
 import ru.tinkoff.utils.LinkHandlerForParser;
 import ru.tinkoff.utils.LinkParser;
 import ru.tinkoff.utils.ServiceNames;
 
-@Component
 public class GithubLinkParser extends LinkHandlerForParser implements LinkParser {
 
     @Override
@@ -20,7 +18,7 @@ public class GithubLinkParser extends LinkHandlerForParser implements LinkParser
     }
 
     @Override
-    protected String getServiceNameFromChild() {
-        return ServiceNames.GITHUB.hostName;
+    protected ServiceNames getServiceNameFromChild() {
+        return ServiceNames.GITHUB;
     }
 }

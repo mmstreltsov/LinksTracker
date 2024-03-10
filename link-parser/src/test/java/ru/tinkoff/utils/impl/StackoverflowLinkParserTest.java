@@ -24,7 +24,7 @@ class StackoverflowLinkParserTest {
         Optional<LinkParserServiceResponse> response = LinkParser.getInfo(link);
         Assertions.assertTrue(response.isPresent());
 
-        String actual = response.get().service();
+        String actual = response.get().service().hostName;
         String excepted = "stackoverflow.com";
         Assertions.assertEquals(excepted, actual);
     }

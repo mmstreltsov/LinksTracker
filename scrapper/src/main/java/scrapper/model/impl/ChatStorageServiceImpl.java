@@ -3,18 +3,18 @@ package scrapper.model.impl;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import scrapper.domain.ChatRepository;
-import scrapper.model.ChatService;
+import scrapper.model.ChatStorageService;
 import scrapper.model.entity.Chat;
 import scrapper.model.entity.Link;
 
 import java.util.List;
 
 @Service
-public class ChatServiceImpl implements ChatService {
+public class ChatStorageServiceImpl implements ChatStorageService {
 
     private final ChatRepository chatRepository;
 
-    public ChatServiceImpl(@Qualifier("jdbcChatRepository") ChatRepository chatRepository) {
+    public ChatStorageServiceImpl(@Qualifier("jdbcChatRepository") ChatRepository chatRepository) {
         this.chatRepository = chatRepository;
     }
 
@@ -31,6 +31,11 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public List<Chat> findAllChatsByChatId(Long id) {
         return chatRepository.findAllByChatId(id);
+    }
+
+    @Override
+    public List<Chat> findAllChatsByCurrentUrl(String url) {
+        return chatRepository.findAllByCurrentLinkUrl(url);
     }
 
     @Override

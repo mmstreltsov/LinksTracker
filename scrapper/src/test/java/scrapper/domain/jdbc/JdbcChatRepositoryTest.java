@@ -2,7 +2,6 @@ package scrapper.domain.jdbc;
 
 
 import dataBaseTests.IntegrationEnvironment;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,8 @@ import scrapper.model.entity.Chat;
 import scrapper.model.entity.Link;
 
 import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest
@@ -30,7 +31,13 @@ class JdbcChatRepositoryTest extends IntegrationEnvironment {
     private final RowMapper<Chat> rowMapper = new DataClassRowMapper<>(Chat.class);
 
     void initializeLinkObject() {
-        jdbcLinkRepository.addLinkAndGetID(new Link(-1L, URI.create("nononon")));
+        Link link = Link.builder()
+                .id(-1L)
+                .url(URI.create("nononon"))
+                .updatedAt(OffsetDateTime.now())
+                .build();
+
+        jdbcLinkRepository.addLinkAndGetID(link);
     }
 
     @Test
@@ -143,5 +150,49 @@ class JdbcChatRepositoryTest extends IntegrationEnvironment {
 
         List<Link> post = jdbcChatRepository.findAllLinksByChatId(chatId);
         Assertions.assertTrue(post.stream().map(it -> it.getUrl().toString()).allMatch(urls::contains));
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void findChatByChatIdAndLinkId_testCorrectLogic() {
+        initializeLinkObject();
+
+        Chat chat = Chat.builder()
+                .chatId(-5L)
+                .linkId(1L)
+                .build();
+        jdbcChatRepository.addChatAndGetID(chat);
+
+
+        Chat actual = jdbcChatRepository.findChatByChatIdAndLinkId(chat.getChatId(), chat.getLinkId());
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(chat.getChatId(), actual.getChatId()),
+                () -> Assertions.assertEquals(chat.getLinkId(), actual.getLinkId())
+        );
+    }
+    @Test
+    @Transactional
+    @Rollback
+    void findAllByCurrentLinkUrl_testCorrectLogic() {
+        String url = "ahaha_ohohoho";
+        Long id = jdbcLinkRepository.addLinkAndGetID(Link.builder().url(URI.create(url)).build());
+
+        List<Chat> chatList = new ArrayList<>();
+        for (int i = 0; i < 5; ++i) {
+            Chat chat = Chat.builder()
+                    .chatId(-1L)
+                    .linkId(id)
+                    .build();
+
+            Long idChat = jdbcChatRepository.addChatAndGetID(chat);
+            chat.setId(idChat);
+
+            chatList.add(chat);
+        }
+
+
+        List<Chat> allChatsWithCurrentUrl = jdbcChatRepository.findAllByCurrentLinkUrl(url);
+        Assertions.assertTrue(allChatsWithCurrentUrl.containsAll(chatList));
     }
 }

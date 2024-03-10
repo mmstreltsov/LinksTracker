@@ -1,7 +1,6 @@
 package scrapper.controllers;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,8 +15,8 @@ import scrapper.controllers.dto.ApiErrorResponse;
 import scrapper.controllers.dto.LinkResponse;
 import scrapper.controllers.dto.ListLinksResponse;
 import scrapper.controllers.dto.RemoveLinkRequest;
-import scrapper.model.ChatService;
-import scrapper.model.LinkService;
+import scrapper.model.ChatStorageService;
+import scrapper.model.LinkStorageService;
 import scrapper.model.entity.Chat;
 import scrapper.model.entity.Link;
 
@@ -29,8 +28,8 @@ import java.util.Objects;
 @RestController
 public class ScrapperController {
 
-    private LinkService linkService;
-    private ChatService chatService;
+    private LinkStorageService linkStorageService;
+    private ChatStorageService chatStorageService;
 
     @PostMapping("/tg-chat/{id}")
     public ResponseEntity<Object> registerChat(@PathVariable("id") Long id) {
@@ -39,13 +38,13 @@ public class ScrapperController {
 
     @DeleteMapping("/tg-chat/{id}")
     public ResponseEntity<Object> deleteChat(@PathVariable("id") Long id) {
-        chatService.removeUser(id);
+        chatStorageService.removeUser(id);
         return ResponseEntity.status(HttpStatus.OK).body("");
     }
 
     @GetMapping("/links")
     public ResponseEntity<Object> getLinks(@RequestHeader("Tg-Chat-Id") Long chatId) {
-        List<Link> chats = chatService.findAllLinksByChatId(chatId);
+        List<Link> chats = chatStorageService.findAllLinksByChatId(chatId);
 
         List<LinkResponse> links = chats.stream()
                 .map(it -> new LinkResponse(it.getId(), it.getUrl().toString()))
@@ -64,7 +63,7 @@ public class ScrapperController {
 
     @PostMapping("/links")
     public ResponseEntity<Object> addLink(@RequestHeader("Tg-Chat-Id") Long chatId, @RequestBody AddLinkRequest request) {
-        boolean isLinkAlreadyTracked = chatService.findAllLinksByChatId(chatId)
+        boolean isLinkAlreadyTracked = chatStorageService.findAllLinksByChatId(chatId)
                 .stream().map(it -> it.getUrl().toString())
                 .anyMatch(it -> Objects.equals(it, request.link));
 
@@ -78,14 +77,14 @@ public class ScrapperController {
         Link link = Link.builder()
                 .url(URI.create(request.link))
                 .build();
-        link = linkService.addLink(link);
+        link = linkStorageService.addLink(link);
 
         Chat chat = Chat.builder()
                 .chatId(chatId)
                 .linkId(link.getId())
                 .build();
 
-        chatService.addUser(chat);
+        chatStorageService.addUser(chat);
 
         LinkResponse linkResponse = new LinkResponse(chatId, link.getUrl().toString());
         return ResponseEntity.status(HttpStatus.OK).body(linkResponse);
@@ -93,7 +92,7 @@ public class ScrapperController {
 
     @PostMapping("/links/delete")
     public ResponseEntity<Object> removeLink(@RequestHeader("Tg-Chat-Id") Long chatId, @RequestBody RemoveLinkRequest request) {
-        List<Link> links = chatService.findAllLinksByChatId(chatId);
+        List<Link> links = chatStorageService.findAllLinksByChatId(chatId);
 
         Link tracked = null;
         for (Link it : links) {
@@ -114,8 +113,8 @@ public class ScrapperController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
 
-        chatService.removeByChatIdAndLinkId(chatId, tracked.getId());
-        linkService.removeLink(tracked);
+        chatStorageService.removeByChatIdAndLinkId(chatId, tracked.getId());
+        linkStorageService.removeLink(tracked);
 
         LinkResponse linkResponse = new LinkResponse(chatId, tracked.getUrl().toString());
         return ResponseEntity.status(HttpStatus.OK).body(linkResponse);

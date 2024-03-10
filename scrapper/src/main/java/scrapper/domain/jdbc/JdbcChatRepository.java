@@ -43,6 +43,7 @@ public class JdbcChatRepository implements ChatRepository {
     }
 
     @Override
+    @Transactional
     public void removeChat(Chat chat) {
         jdbcTemplate.update(
                 "DELETE FROM chat WHERE chat_id=(?);", chat.getChatId()
@@ -66,15 +67,38 @@ public class JdbcChatRepository implements ChatRepository {
     }
 
     @Override
-    public Chat findChatByChatIdAndLinkId(Long chatId, Long linkId) {
-        return null;
+    @Transactional
+    public List<Chat> findAllByCurrentLinkUrl(String url) {
+        String sqlQuery =
+                "WITH l AS (SELECT * FROM links WHERE url=(?)) " +
+                "SELECT * " +
+                "FROM chat c " +
+                "INNER JOIN l " +
+                "ON c.link_id = l.id;";
+        return jdbcTemplate.query(
+                sqlQuery,
+                new DataClassRowMapper<>(Chat.class),
+                url);
     }
 
     @Override
+    public Chat findChatByChatIdAndLinkId(Long chatId, Long linkId) {
+        return jdbcTemplate.queryForObject(
+                "SELECT * FROM chat WHERE chat_id=(?) AND link_id=(?);",
+                rowMapper,
+                chatId, linkId);
+    }
+
+    /**
+     Return distinct links with stubs in 'id', 'updated' and 'checked' columns
+     */
+    @Override
+    @Transactional
     public List<Link> findAllLinksByChatId(Long chatId) {
         String sqlQuery =
                 "WITH t AS (SELECT * FROM chat WHERE chat_id=(?)) " +
-                "SELECT DISTINCT -1 as id, l.url as url FROM links l " +
+                "SELECT DISTINCT -1 as id, l.url as url, null as updated_at, null as checked_at " +
+                "FROM links l " +
                 "INNER JOIN t " +
                 "ON t.link_id = l.id;";
         return jdbcTemplate.query(

@@ -12,6 +12,7 @@ import scrapper.domain.LinkRepository;
 import scrapper.model.entity.Link;
 
 import java.sql.PreparedStatement;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,13 +27,14 @@ public class JdbcLinkRepository implements LinkRepository {
     @Override
     @Transactional
     public Long addLinkAndGetID(Link link) {
-        final String insertIntoSql = "INSERT INTO links (url) VALUES (?)";
+        final String insertIntoSql = "INSERT INTO links (url, updated_at) VALUES (?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(
                 connection -> {
                     PreparedStatement preparedStatement = connection.prepareStatement(insertIntoSql, new String[]{"id"});
                     preparedStatement.setString(1, link.getUrl().toString());
+                    preparedStatement.setObject(2, OffsetDateTime.now());
                     return preparedStatement;
                 }, keyHolder
         );
@@ -44,11 +46,11 @@ public class JdbcLinkRepository implements LinkRepository {
     @Transactional
     public void removeLink(Link link) {
         jdbcTemplate.update(
-                "DELETE FROM links WHERE id=(?)", link.getId());
+                "DELETE FROM links WHERE id=(?)", link.getId()
+        );
     }
 
     @Override
-    @Transactional
     public List<Link> findAll() {
         return jdbcTemplate.query(
                 "SELECT * FROM links",
@@ -57,12 +59,25 @@ public class JdbcLinkRepository implements LinkRepository {
     }
 
     @Override
-    @Transactional
     public Link findById(Long id) {
         return jdbcTemplate.queryForObject(
                 "SELECT * FROM links WHERE id=(?)",
                 rowMapper,
                 id
+        );
+    }
+
+    @Override
+    public void updateCheckField(Link link) {
+        jdbcTemplate.update(
+                "UPDATE links SET checked_at = (?) WHERE id=(?)", OffsetDateTime.now(), link.getId()
+        );
+    }
+
+    @Override
+    public void updateUpdateField(Link link) {
+        jdbcTemplate.update(
+                "UPDATE links SET updated_at = (?) WHERE id=(?)", OffsetDateTime.now(), link.getId()
         );
     }
 }

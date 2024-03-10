@@ -1,7 +1,6 @@
 package scrapper.client.impl;
 
 import lombok.AllArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +19,9 @@ public class StackoverflowClientImpl implements StackoverflowClient {
 
     private final WebClient webClient;
 
+
     @Override
-    public StackoverflowUnitServiceResponse getInfo(String id) {
+    public StackoverflowUnitServiceResponse getInfoFromQuestion(String id) {
         ResponseEntity<StackoverflowServiceResponse> response = webClient.get()
                 .uri("https://api.stackexchange.com/2.3/questions/" + id + "?site=stackoverflow")
                 .accept(MediaType.APPLICATION_JSON)

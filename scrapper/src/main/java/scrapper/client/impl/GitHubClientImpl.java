@@ -17,6 +17,7 @@ class GitHubClientImpl implements GithubClient {
     private String token;
 
     private final WebClient webClient;
+
     GitHubClientImpl(WebClient webClient) {
         this.webClient = webClient;
     }
@@ -27,7 +28,6 @@ class GitHubClientImpl implements GithubClient {
                 .uri("https://api.github.com/networks/" + ownerAndRepo + "/events")
                 .header("Accept", "application/vnd.github+json")
                 .header("Authorization", "Bearer " + token)
-//                .header("X-GitHub-Api-Version:", "2022-11-28")
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, r -> r.bodyToMono(Exception.class))

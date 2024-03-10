@@ -1,11 +1,9 @@
 package ru.tinkoff.utils.impl;
 
-import org.springframework.stereotype.Component;
 import ru.tinkoff.utils.LinkHandlerForParser;
 import ru.tinkoff.utils.LinkParser;
 import ru.tinkoff.utils.ServiceNames;
 
-@Component
 public class StackoverflowLinkParser extends LinkHandlerForParser implements LinkParser {
 
     @Override
@@ -19,7 +17,7 @@ public class StackoverflowLinkParser extends LinkHandlerForParser implements Lin
     }
 
     @Override
-    protected String getServiceNameFromChild() {
-        return ServiceNames.STACKOVERFLOW.hostName;
+    protected ServiceNames getServiceNameFromChild() {
+        return ServiceNames.STACKOVERFLOW;
     }
 }

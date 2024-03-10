@@ -12,4 +12,7 @@ public interface LinkRepository {
     List<Link> findAll();
 
     Link findById(Long id);
+
+    void updateCheckField(Link link);
+    void updateUpdateField(Link link);
 }

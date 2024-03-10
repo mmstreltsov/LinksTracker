@@ -3,15 +3,17 @@ package scrapper.model.impl;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import scrapper.domain.LinkRepository;
-import scrapper.model.LinkService;
+import scrapper.model.LinkStorageService;
 import scrapper.model.entity.Link;
 
+import java.util.List;
+
 @Service
-public class LinkServiceImpl implements LinkService {
+public class LinkStorageServiceImpl implements LinkStorageService {
 
     private final LinkRepository linkRepository;
 
-    public LinkServiceImpl(@Qualifier("jdbcLinkRepository") LinkRepository linkRepository) {
+    public LinkStorageServiceImpl(@Qualifier("jdbcLinkRepository") LinkRepository linkRepository) {
         this.linkRepository = linkRepository;
     }
 
@@ -29,9 +31,24 @@ public class LinkServiceImpl implements LinkService {
         linkRepository.removeLink(link);
     }
 
+    @Override
+    public List<Link> findAll() {
+        return linkRepository.findAll();
+    }
+
 
     @Override
     public Link findLinkById(Long id) {
         return linkRepository.findById(id);
+    }
+
+    @Override
+    public void setCheckFieldToNow(Link link) {
+        linkRepository.updateCheckField(link);
+    }
+
+    @Override
+    public void setUpdateFieldToNow(Link link) {
+        linkRepository.updateUpdateField(link);
     }
 }

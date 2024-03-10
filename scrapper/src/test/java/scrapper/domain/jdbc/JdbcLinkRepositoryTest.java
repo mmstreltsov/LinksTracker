@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import scrapper.model.entity.Link;
 
 import java.net.URI;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @SpringBootTest
@@ -33,7 +34,6 @@ class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     }
 
     @Test
-    @SneakyThrows
     @Transactional
     @Rollback
     void addLinkWithLinkAndGetID_testInsertElem() {
@@ -41,6 +41,7 @@ class JdbcLinkRepositoryTest extends IntegrationEnvironment {
 
         Link link = Link.builder()
                 .url(URI.create("ahaha"))
+                .updatedAt(OffsetDateTime.now())
                 .build();
 
         Long id = jdbcLinkRepository.addLinkAndGetID(link);
@@ -48,18 +49,18 @@ class JdbcLinkRepositoryTest extends IntegrationEnvironment {
 
         List<Link> post = jdbcLinkRepository.findAll();
         Assertions.assertAll(
-                () -> Assertions.assertTrue(post.contains(link)),
+                () -> Assertions.assertTrue(post.stream().map(Link::getId).toList().contains(link.getId())),
                 () -> Assertions.assertEquals(post.size(), prev.size() + 1)
         );
     }
 
     @Test
-    @SneakyThrows
     @Transactional
     @Rollback
     void addLinkWithLinkAndGetID_testValidIdSetter() {
         Link link = Link.builder()
                 .url(URI.create("ahaha"))
+                .updatedAt(OffsetDateTime.now())
                 .build();
 
         Long firstId = jdbcLinkRepository.addLinkAndGetID(link);
@@ -68,12 +69,12 @@ class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     }
 
     @Test
-    @SneakyThrows
     @Transactional
     @Rollback
     void removeLink_testCorrectLogic() {
         Link link = Link.builder()
                 .url(URI.create("ahaha"))
+                .updatedAt(OffsetDateTime.now())
                 .build();
 
         Long id = jdbcLinkRepository.addLinkAndGetID(link);
@@ -90,12 +91,12 @@ class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     }
 
     @Test
-    @SneakyThrows
     @Transactional
     @Rollback
     void findById_testCorrectLogic() {
         Link link = Link.builder()
                 .url(URI.create("ahaha"))
+                .updatedAt(OffsetDateTime.now())
                 .build();
 
         Long id = jdbcLinkRepository.addLinkAndGetID(link);
@@ -106,6 +107,58 @@ class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         Assertions.assertAll(
                 () -> Assertions.assertEquals(link.getUrl(), actual.getUrl()),
                 () -> Assertions.assertEquals(link.getId(), actual.getId())
+        );
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void setCheckFieldToNow_testCorrectLogic() {
+        OffsetDateTime start = OffsetDateTime.now();
+
+        Link link = Link.builder()
+                .url(URI.create("ahaha"))
+                .updatedAt(OffsetDateTime.now())
+                .build();
+
+        Long id = jdbcLinkRepository.addLinkAndGetID(link);
+        link.setId(id);
+
+        jdbcLinkRepository.updateCheckField(link);
+
+        OffsetDateTime checkedAt = jdbcLinkRepository.findById(link.getId()).getCheckedAt();
+
+        OffsetDateTime end = OffsetDateTime.now();
+        Assertions.assertAll(
+                () -> Assertions.assertTrue(start.isBefore(checkedAt)),
+                () -> Assertions.assertTrue(end.isAfter(checkedAt))
+        );
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void setUpdateFieldToNow_testCorrectLogic() {
+        OffsetDateTime start = OffsetDateTime.now();
+
+        Link link = Link.builder()
+                .url(URI.create("ahaha"))
+                .updatedAt(OffsetDateTime.now())
+                .build();
+
+        Long id = jdbcLinkRepository.addLinkAndGetID(link);
+        link.setId(id);
+        OffsetDateTime middle = OffsetDateTime.now();
+
+        jdbcLinkRepository.updateUpdateField(link);
+
+        OffsetDateTime updatedAt = jdbcLinkRepository.findById(link.getId()).getUpdatedAt();
+
+        OffsetDateTime end = OffsetDateTime.now();
+        Assertions.assertAll(
+                () -> Assertions.assertTrue(start.isBefore(updatedAt)),
+                () -> Assertions.assertTrue(middle.isBefore(updatedAt)),
+                () -> Assertions.assertTrue(end.isAfter(updatedAt))
         );
     }
 }

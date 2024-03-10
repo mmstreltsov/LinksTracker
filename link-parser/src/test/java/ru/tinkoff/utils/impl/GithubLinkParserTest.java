@@ -25,7 +25,7 @@ class GithubLinkParserTest {
         Optional<LinkParserServiceResponse> response = LinkParser.getInfo(link);
         Assertions.assertTrue(response.isPresent());
 
-        String actual = response.get().service();
+        String actual = response.get().service().hostName;
         String excepted = "github.com";
         Assertions.assertEquals(excepted, actual);
     }
