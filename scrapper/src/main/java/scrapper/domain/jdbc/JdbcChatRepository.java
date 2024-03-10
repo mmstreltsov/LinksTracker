@@ -89,15 +89,12 @@ public class JdbcChatRepository implements ChatRepository {
                 chatId, linkId);
     }
 
-    /**
-     Return distinct links with stubs in 'id', 'updated' and 'checked' columns
-     */
     @Override
     @Transactional
     public List<Link> findAllLinksByChatId(Long chatId) {
         String sqlQuery =
                 "WITH t AS (SELECT * FROM chat WHERE chat_id=(?)) " +
-                "SELECT DISTINCT -1 as id, l.url as url, null as updated_at, null as checked_at " +
+                "SELECT l.id as id, l.url as url, l.updated_at as updated_at, l.checked_at as checked_at " +
                 "FROM links l " +
                 "INNER JOIN t " +
                 "ON t.link_id = l.id;";

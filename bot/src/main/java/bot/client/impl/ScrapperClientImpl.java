@@ -96,7 +96,7 @@ public class ScrapperClientImpl implements ScrapperClient {
                 .build();
 
         var response = webClient.post()
-                .uri("links/delete")
+                .uri("/links/delete")
                 .header(tgChatIdHeader, String.valueOf(id))
                 .bodyValue(removeLinkRequest)
                 .accept(MediaType.APPLICATION_JSON)

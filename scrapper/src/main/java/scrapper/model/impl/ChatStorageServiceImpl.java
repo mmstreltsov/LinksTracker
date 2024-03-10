@@ -52,6 +52,8 @@ public class ChatStorageServiceImpl implements ChatStorageService {
     @Override
     public void removeByChatIdAndLinkId(Long chatId, Long linkId) {
         Chat chat = chatRepository.findChatByChatIdAndLinkId(chatId, linkId);
-        chatRepository.removeChat(chat);
+        if (chat != null) {
+            chatRepository.removeChat(chat);
+        }
     }
 }

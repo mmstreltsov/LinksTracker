@@ -34,7 +34,7 @@ public class LinkUpdaterSchedulerImpl implements LinkUpdaterScheduler {
     private final ExecutorService executorService = Executors.newFixedThreadPool(8);
 
     private boolean isLinkUpdated(Link link, LastUpdatedDTO lastUpdatedDTO) {
-        return false;
+        return true;
         //        return lastUpdatedDTO.getUpdatedAt()
 //                .isAfter(link.getUpdatedAt().plusSeconds(3));
     }

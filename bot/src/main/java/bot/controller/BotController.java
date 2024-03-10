@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
-@Slf4j
 public class BotController {
 
     private final TelegramBotInit telegramBotInit;
@@ -23,18 +22,15 @@ public class BotController {
     @PostMapping(value = "/updates")
     public ResponseEntity<Object> updates(@RequestBody LinkUpdateRequest linkUpdateRequest) {
         try {
-            log.info("Start handle: " + linkUpdateRequest);
             linkUpdateRequest.tgChatIds.stream()
                     .parallel()
                     .forEach(chatId -> {
                         String text = linkUpdateRequest.url + ": " + linkUpdateRequest.description;
 
                         SendMessage sendMessage = new SendMessage(chatId, text);
-                        log.info("Trying to send msg");
                         telegramBotInit.getBot().execute(sendMessage);
                     });
         } catch (Throwable t) {
-            log.info("Return BAD_REQUEST");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiErrorResponse());
         }
         return ResponseEntity.status(HttpStatus.OK).body("");
