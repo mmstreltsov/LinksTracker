@@ -2,6 +2,7 @@ package scrapper.domain;
 
 import scrapper.model.entity.Link;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 public interface LinkRepository {
@@ -15,4 +16,6 @@ public interface LinkRepository {
 
     void updateCheckField(Link link);
     void updateUpdateField(Link link);
+
+    List<Link> findLinksWithCheckedFieldLessThenGiven(OffsetDateTime time);
 }

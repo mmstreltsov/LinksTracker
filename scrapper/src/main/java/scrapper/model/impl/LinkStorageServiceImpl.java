@@ -6,6 +6,7 @@ import scrapper.domain.LinkRepository;
 import scrapper.model.LinkStorageService;
 import scrapper.model.entity.Link;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Service
@@ -50,5 +51,10 @@ public class LinkStorageServiceImpl implements LinkStorageService {
     @Override
     public void setUpdateFieldToNow(Link link) {
         linkRepository.updateUpdateField(link);
+    }
+
+    @Override
+    public List<Link> findLinksWithCheckedFieldLessThenGiven(OffsetDateTime time) {
+        return linkRepository.findLinksWithCheckedFieldLessThenGiven(time);
     }
 }

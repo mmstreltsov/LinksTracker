@@ -27,14 +27,19 @@ public class JdbcLinkRepository implements LinkRepository {
     @Override
     @Transactional
     public Long addLinkAndGetID(Link link) {
-        final String insertIntoSql = "INSERT INTO links (url, updated_at) VALUES (?, ?)";
+        final String insertIntoSql = "INSERT INTO links (url, updated_at, checked_at) VALUES (?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        if (link.getUpdatedAt() == null) {
+            link.setUpdatedAt(OffsetDateTime.now());
+        }
 
         jdbcTemplate.update(
                 connection -> {
                     PreparedStatement preparedStatement = connection.prepareStatement(insertIntoSql, new String[]{"id"});
                     preparedStatement.setString(1, link.getUrl().toString());
-                    preparedStatement.setObject(2, OffsetDateTime.now());
+                    preparedStatement.setObject(2, link.getUpdatedAt());
+                    preparedStatement.setObject(3, link.getCheckedAt());
                     return preparedStatement;
                 }, keyHolder
         );
@@ -78,6 +83,15 @@ public class JdbcLinkRepository implements LinkRepository {
     public void updateUpdateField(Link link) {
         jdbcTemplate.update(
                 "UPDATE links SET updated_at = (?) WHERE id=(?)", OffsetDateTime.now(), link.getId()
+        );
+    }
+
+    @Override
+    public List<Link> findLinksWithCheckedFieldLessThenGiven(OffsetDateTime time) {
+        return jdbcTemplate.query(
+                "SELECT * FROM links WHERE checked_at < (?) OR checked_at is null",
+                rowMapper,
+                time
         );
     }
 }

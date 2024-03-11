@@ -15,10 +15,10 @@ import scrapper.service.GetResponseFromAnyHost;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
-import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 @ExtendWith(MockitoExtension.class)
-class LinkUpdaterSchedulerImplTest {
+class UpdateAndSendLinkServiceImplTest {
 
     @Mock
     private GetResponseFromAnyHost checkInfo;
@@ -28,27 +28,24 @@ class LinkUpdaterSchedulerImplTest {
     private LinkStorageService linkStorageService;
     @Mock
     private ChatStorageService chatStorageService;
+    @Mock
+    private ExecutorService executorServiceForFutureTasks;
 
 
-    private LinkUpdaterSchedulerImpl linkUpdaterScheduler;
+    private UpdateAndSendLinkServiceImpl ahahaService;
 
     @BeforeEach
     void init() {
-        linkUpdaterScheduler = new LinkUpdaterSchedulerImpl(checkInfo, botClient, linkStorageService, chatStorageService);
-
-        Mockito.when(linkStorageService.findAll())
-                .thenReturn(List.of(
-                        new Link(1L, URI.create("ahaha"), OffsetDateTime.MIN, OffsetDateTime.now()),
-                        new Link(2L, URI.create("what"), OffsetDateTime.MAX, OffsetDateTime.now()),
-                        new Link(3L, URI.create("ohoho"), OffsetDateTime.now(), OffsetDateTime.now())
-                        ));
+        ahahaService = new UpdateAndSendLinkServiceImpl(checkInfo, botClient,
+                linkStorageService, chatStorageService, executorServiceForFutureTasks);
     }
 
     @Test
     void actionByUpdate_testWhenCheckInfoThrowSmth() {
         Mockito.when(checkInfo.getResponse(Mockito.any()))
                 .thenThrow(RuntimeException.class);
+        Link link = new Link(1L, URI.create("ahaha"), OffsetDateTime.MIN, OffsetDateTime.now());
 
-        Assertions.assertDoesNotThrow(() -> linkUpdaterScheduler.update());
+        Assertions.assertDoesNotThrow(() -> ahahaService.handle(link));
     }
 }

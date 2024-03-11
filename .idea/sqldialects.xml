@@ -5,5 +5,6 @@
     <file url="file://$PROJECT_DIR$/scrapper/src/main/java/scrapper/domain/jdbc/JdbcLinkRepository.java" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/scrapper/src/main/resources/db/changelog/changeset/init/create-links-table.sql" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/scrapper/src/main/resources/db/changelog/changeset/v1/insert-data-22-02-2024.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/scrapper/src/test/java/scrapper/domain/jdbc/JdbcLinkRepositoryTest.java" dialect="GenericSQL" />
   </component>
 </project>

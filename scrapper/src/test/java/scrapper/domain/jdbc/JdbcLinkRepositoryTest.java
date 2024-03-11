@@ -1,7 +1,6 @@
 package scrapper.domain.jdbc;
 
 import dataBaseTests.IntegrationEnvironment;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +14,7 @@ import scrapper.model.entity.Link;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest
@@ -160,5 +160,48 @@ class JdbcLinkRepositoryTest extends IntegrationEnvironment {
                 () -> Assertions.assertTrue(middle.isBefore(updatedAt)),
                 () -> Assertions.assertTrue(end.isAfter(updatedAt))
         );
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void getLinkWithCheckedFieldLessThenGiven_testCorrectLogic() {
+        List<Long> ids = new ArrayList<>();
+
+        OffsetDateTime now = OffsetDateTime.now();
+
+        for (int i = 0; i < 10; ++i) {
+            Link link = Link.builder()
+                    .url(URI.create("stub"))
+                    .updatedAt(now)
+                    .checkedAt(now.plusMinutes(i))
+                    .build();
+
+            Long id = jdbcLinkRepository.addLinkAndGetID(link);
+            ids.add(id);
+        }
+
+        List<Link> links = jdbcLinkRepository.findLinksWithCheckedFieldLessThenGiven(OffsetDateTime.now().plusMinutes(5).plusSeconds(15));
+
+        List<Long> excepted = ids.subList(0, 6);
+        List<Long> actual = links.stream().map(Link::getId).toList();
+
+        Assertions.assertTrue(actual.containsAll(excepted));
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void getLinkWithCheckedFieldLessThenGiven_testCorrectLogicCaseNull() {
+        Link link = Link.builder()
+                .url(URI.create("stub"))
+                .build();
+
+        Long id = jdbcLinkRepository.addLinkAndGetID(link);
+
+        List<Link> links = jdbcLinkRepository.findLinksWithCheckedFieldLessThenGiven(OffsetDateTime.now().plusMinutes(5).plusSeconds(15));
+        List<Long> actual = links.stream().map(Link::getId).toList();
+
+        Assertions.assertTrue(actual.contains(id));
     }
 }
