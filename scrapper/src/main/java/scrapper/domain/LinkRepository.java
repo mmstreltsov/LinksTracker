@@ -14,7 +14,10 @@ public interface LinkRepository {
 
     Link findById(Long id);
 
+    List<Link> findAllByUrl(String url);
+
     void updateCheckField(Link link);
+
     void updateUpdateField(Link link);
 
     List<Link> findLinksWithCheckedFieldLessThenGiven(OffsetDateTime time);

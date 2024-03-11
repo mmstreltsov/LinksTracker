@@ -113,6 +113,26 @@ class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     @Test
     @Transactional
     @Rollback
+    void findAllByUrl_testCorrectLogic() {
+        Link link = Link.builder()
+                .url(URI.create("ahaha"))
+                .updatedAt(OffsetDateTime.now())
+                .build();
+
+        int count = 5;
+
+        for (int i = 0; i < count; ++i) {
+            jdbcLinkRepository.addLinkAndGetID(link);
+        }
+
+        List<Link> actual = jdbcLinkRepository.findAllByUrl(link.getUrl().toString());
+
+        Assertions.assertEquals(actual.size(), count);
+    }
+
+    @Test
+    @Transactional
+    @Rollback
     void setCheckFieldToNow_testCorrectLogic() {
         OffsetDateTime start = OffsetDateTime.now();
 
@@ -133,6 +153,35 @@ class JdbcLinkRepositoryTest extends IntegrationEnvironment {
                 () -> Assertions.assertTrue(start.isBefore(checkedAt)),
                 () -> Assertions.assertTrue(end.isAfter(checkedAt))
         );
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void setCheckFieldToNow_testCorrectLogicWithMultipleUrls() {
+        OffsetDateTime start = OffsetDateTime.now();
+
+        Link link = Link.builder()
+                .url(URI.create("ahaha"))
+                .updatedAt(OffsetDateTime.now())
+                .build();
+
+        jdbcLinkRepository.addLinkAndGetID(link);
+        jdbcLinkRepository.addLinkAndGetID(link);
+
+
+        jdbcLinkRepository.updateCheckField(link);
+
+
+        List<Link> links = jdbcLinkRepository.findAllByUrl(link.getUrl().toString());
+        OffsetDateTime end = OffsetDateTime.now();
+
+        links.forEach(it -> {
+            Assertions.assertAll(
+                    () -> Assertions.assertTrue(start.isBefore(it.getCheckedAt())),
+                    () -> Assertions.assertTrue(end.isAfter(it.getCheckedAt()))
+            );
+        });
     }
 
     @Test
@@ -160,6 +209,35 @@ class JdbcLinkRepositoryTest extends IntegrationEnvironment {
                 () -> Assertions.assertTrue(middle.isBefore(updatedAt)),
                 () -> Assertions.assertTrue(end.isAfter(updatedAt))
         );
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void setUpdateFieldToNow_testCorrectLogicWithMultipleUrls() {
+        OffsetDateTime start = OffsetDateTime.now();
+
+        Link link = Link.builder()
+                .url(URI.create("ahaha"))
+                .updatedAt(OffsetDateTime.now())
+                .build();
+
+        jdbcLinkRepository.addLinkAndGetID(link);
+        jdbcLinkRepository.addLinkAndGetID(link);
+
+
+        jdbcLinkRepository.updateUpdateField(link);
+
+
+        List<Link> links = jdbcLinkRepository.findAllByUrl(link.getUrl().toString());
+        OffsetDateTime end = OffsetDateTime.now();
+
+        links.forEach(it -> {
+            Assertions.assertAll(
+                    () -> Assertions.assertTrue(start.isBefore(it.getUpdatedAt())),
+                    () -> Assertions.assertTrue(end.isAfter(it.getUpdatedAt()))
+            );
+        });
     }
 
     @Test

@@ -73,16 +73,25 @@ public class JdbcLinkRepository implements LinkRepository {
     }
 
     @Override
+    public List<Link> findAllByUrl(String url) {
+        return jdbcTemplate.query(
+                "SELECT * FROM links WHERE url=(?)",
+                rowMapper,
+                url
+        );
+    }
+
+    @Override
     public void updateCheckField(Link link) {
         jdbcTemplate.update(
-                "UPDATE links SET checked_at = (?) WHERE id=(?)", OffsetDateTime.now(), link.getId()
+                "UPDATE links SET checked_at = (?) WHERE url=(?)", OffsetDateTime.now(), link.getUrl().toString()
         );
     }
 
     @Override
     public void updateUpdateField(Link link) {
         jdbcTemplate.update(
-                "UPDATE links SET updated_at = (?) WHERE id=(?)", OffsetDateTime.now(), link.getId()
+                "UPDATE links SET updated_at = (?) WHERE url=(?)", OffsetDateTime.now(), link.getUrl().toString()
         );
     }
 
