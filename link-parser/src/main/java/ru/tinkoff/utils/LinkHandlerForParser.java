@@ -21,9 +21,9 @@ public abstract class LinkHandlerForParser implements LinkParser {
     }
 
     private Optional<LinkParserServiceResponse> getInfoFromHostAndPath(String hostname, String pathname) {
-        String serviceName = getServiceNameFromChild();
+        ServiceNames serviceName = getServiceNameFromChild();
 
-        if (!serviceName.equalsIgnoreCase(hostname)) {
+        if (!(serviceName.hostName).equalsIgnoreCase(hostname)) {
             return Optional.empty();
         }
 
@@ -38,5 +38,5 @@ public abstract class LinkHandlerForParser implements LinkParser {
 
     protected abstract String getValueFromChild(String hostname, String pathname);
 
-    protected abstract String getServiceNameFromChild();
+    protected abstract ServiceNames getServiceNameFromChild();
 }

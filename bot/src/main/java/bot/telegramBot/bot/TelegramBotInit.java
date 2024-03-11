@@ -3,13 +3,13 @@ package bot.telegramBot.bot;
 import bot.telegramBot.commands.Command;
 import bot.telegramBot.service.CommandExecService;
 import bot.telegramBot.service.ResponseFromCommand;
-import bot.telegramBot.service.impl.CommandExecServiceImpl;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.BotCommand;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SetMyCommands;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -17,10 +17,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import static bot.telegramBot.service.impl.CommandExecServiceImpl.*;
-
 @Slf4j
 @Service
+@Getter
 public class TelegramBotInit {
 
     private final TelegramBot bot;

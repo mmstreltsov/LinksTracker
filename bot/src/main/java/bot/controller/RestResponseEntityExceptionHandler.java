@@ -13,7 +13,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<Object> handleConflict (RuntimeException ex, WebRequest request) {
-        String bodyOfResponse = "Ahahahah";
+        String bodyOfResponse = "";
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
     }
 }

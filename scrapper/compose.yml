@@ -27,8 +27,10 @@ services:
       - --username=admin
       - --password=password
       - update
+    restart: on-failure
     volumes:
       - ./src/main/resources/db/changelog/:/liquibase/changelog
+      - ./src/main/resources/db/:/liquibase/changelog/db
     networks:
       - backend
 

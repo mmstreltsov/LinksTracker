@@ -9,67 +9,44 @@ import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
 
-import static dataBaseTests.AbstractContainerBaseTest.POSTGRES;
-
-abstract class AbstractContainerBaseTest {
-    public final static PostgreSQLContainer<?> POSTGRES =
-            new PostgreSQLContainer<>(DockerImageName.parse("postgres:14")
-                    .asCompatibleSubstituteFor("postgres"))
-                    .withDatabaseName("scrapper")
-                    .withUsername("admin")
-                    .withPassword("password");
+public abstract class IntegrationEnvironment {
+    protected static PostgreSQLContainer<?> container = new PostgreSQLContainer<>(DockerImageName.parse("postgres:14")
+            .asCompatibleSubstituteFor("postgres"))
+            .withDatabaseName("databaseName")
+            .withUsername("username")
+            .withPassword("password");
 
     static {
-        POSTGRES.start();
+        container.start();
+        initialize();
     }
-}
 
-public class IntegrationEnvironment {
-
-    @BeforeAll
     @SneakyThrows
-    public static void init() {
-        Connection connection = DriverManager.getConnection(POSTGRES.getJdbcUrl(), POSTGRES.getUsername(), POSTGRES.getPassword());
+    public static void initialize() {
+        Connection connection = DriverManager.getConnection(container.getJdbcUrl(), container.getUsername(), container.getPassword());
 
         Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
 
         Path pathToChangeLog = Path.of("db", "changelog", "db.changelog-master.yaml");
-        System.out.println(new File(pathToChangeLog.toString()).exists());
         Liquibase liquibase = new liquibase.Liquibase(pathToChangeLog.toString(), new ClassLoaderResourceAccessor(), database);
         liquibase.update(new Contexts(), new LabelExpression());
     }
-
-
-    @AfterAll
-    public static void tearDown() {
-        POSTGRES.stop();
-    }
-
-
-
-    @Test
-    @SneakyThrows
-    public void test() {
-        try (Connection connection = DriverManager.getConnection(POSTGRES.getJdbcUrl(), POSTGRES.getUsername(), POSTGRES.getPassword());) {
-            Statement statement = connection.createStatement();
-
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM LINKS");
-            while (resultSet.next()) {
-                System.out.println(resultSet.getString("url"));
-            }
-        }
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", container::getJdbcUrl);
+        registry.add("spring.datasource.username", container::getUsername);
+        registry.add("spring.datasource.password", container::getPassword);
     }
 }

@@ -35,7 +35,6 @@ public class CommandExecServiceImpl implements CommandExecService {
             }
 
             return new ResponseFromCommand(id, BotResponse.NOT_SUPPORTED_COMMAND.msg);
-
         } catch (Exception ex) {
             log.info("Bad request: id = " + id + ", error = " + ex.getMessage());
             return new ResponseFromCommand(id, BotResponse.SMTH_GONE_WRONG.msg + ":\n" + ex.getMessage());

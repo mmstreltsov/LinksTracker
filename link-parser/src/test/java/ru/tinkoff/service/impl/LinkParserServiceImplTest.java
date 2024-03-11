@@ -17,7 +17,7 @@ class LinkParserServiceImplTest {
     private LinkParserService linkParserService;
 
     @BeforeEach
-    void init () {
+    void init() {
         List<LinkParser> linkParsers = List.of(new GithubLinkParser(), new StackoverflowLinkParser());
         linkParserService = new LinkParserServiceImpl(linkParsers);
     }
