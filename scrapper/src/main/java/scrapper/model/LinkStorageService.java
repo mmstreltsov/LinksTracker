@@ -14,5 +14,5 @@ public interface LinkStorageService {
     Link findLinkById(Long id);
     void setCheckFieldToNow(Link link);
     void setUpdateFieldToNow(Link link);
-    List<Link> findLinksWithCheckedFieldLessThenGiven(OffsetDateTime time);
+    List<Link> findLinksCheckedFieldLessThenGivenAndUniqueUrl(OffsetDateTime time);
 }

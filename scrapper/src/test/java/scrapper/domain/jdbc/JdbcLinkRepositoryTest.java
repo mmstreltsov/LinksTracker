@@ -243,14 +243,14 @@ class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     @Test
     @Transactional
     @Rollback
-    void getLinkWithCheckedFieldLessThenGiven_testCorrectLogic() {
+    void findLinksWith_CheckedFieldLessThen_UniqueUrl__testCorrectLogic() {
         List<Long> ids = new ArrayList<>();
 
         OffsetDateTime now = OffsetDateTime.now();
 
         for (int i = 0; i < 10; ++i) {
             Link link = Link.builder()
-                    .url(URI.create("stub"))
+                    .url(URI.create(String.valueOf(i)))
                     .updatedAt(now)
                     .checkedAt(now.plusMinutes(i))
                     .build();
@@ -259,12 +259,36 @@ class JdbcLinkRepositoryTest extends IntegrationEnvironment {
             ids.add(id);
         }
 
-        List<Link> links = jdbcLinkRepository.findLinksWithCheckedFieldLessThenGiven(OffsetDateTime.now().plusMinutes(5).plusSeconds(15));
+        List<Link> links = jdbcLinkRepository.findLinksCheckedFieldLessThenGivenAndUniqueUrl(OffsetDateTime.now().plusMinutes(5).plusSeconds(15));
 
         List<Long> excepted = ids.subList(0, 6);
         List<Long> actual = links.stream().map(Link::getId).toList();
 
         Assertions.assertTrue(actual.containsAll(excepted));
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void findLinksWith_CheckedFieldLessThen_UniqueUrl__testUniqueValues() {
+        for (int i = 0; i < 10; ++i) {
+            String v = String.valueOf(i % 7);
+
+            Link link = Link.builder()
+                    .url(URI.create(v))
+                    .updatedAt(OffsetDateTime.now())
+                    .checkedAt(OffsetDateTime.MIN)
+                    .build();
+
+            jdbcLinkRepository.addLinkAndGetID(link);
+        }
+
+        List<Link> links = jdbcLinkRepository.findLinksCheckedFieldLessThenGivenAndUniqueUrl(OffsetDateTime.now());
+
+        List<String> actual = links.stream().map(it -> it.getUrl().toString()).toList();
+        List<String> uniqueActual = actual.stream().distinct().toList();
+
+        Assertions.assertEquals(actual.size(), uniqueActual.size());
     }
 
     @Test
@@ -277,7 +301,7 @@ class JdbcLinkRepositoryTest extends IntegrationEnvironment {
 
         Long id = jdbcLinkRepository.addLinkAndGetID(link);
 
-        List<Link> links = jdbcLinkRepository.findLinksWithCheckedFieldLessThenGiven(OffsetDateTime.now().plusMinutes(5).plusSeconds(15));
+        List<Link> links = jdbcLinkRepository.findLinksCheckedFieldLessThenGivenAndUniqueUrl(OffsetDateTime.now().plusMinutes(5).plusSeconds(15));
         List<Long> actual = links.stream().map(Link::getId).toList();
 
         Assertions.assertTrue(actual.contains(id));

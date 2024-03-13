@@ -54,7 +54,7 @@ public class LinkStorageServiceImpl implements LinkStorageService {
     }
 
     @Override
-    public List<Link> findLinksWithCheckedFieldLessThenGiven(OffsetDateTime time) {
-        return linkRepository.findLinksWithCheckedFieldLessThenGiven(time);
+    public List<Link> findLinksCheckedFieldLessThenGivenAndUniqueUrl(OffsetDateTime time) {
+        return linkRepository.findLinksCheckedFieldLessThenGivenAndUniqueUrl(time);
     }
 }

@@ -10,10 +10,8 @@ import scrapper.service.UpdateAndSendLinkService;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.stream.Stream;
 
 
 @Slf4j
@@ -38,12 +36,10 @@ public class SelectLinkAndExecuteActionServiceImpl implements SelectLinkAndExecu
         );
     }
 
-    private Stream<Link> filteredLinks() {
-        Set<String> uniqueUrls = new HashSet<>();
-
-        return linkStorageService.findLinksWithCheckedFieldLessThenGiven(OffsetDateTime.now().minus(waitingTimeToRepeatSameRequest))
-                .stream()
-                .filter(it -> uniqueUrls.add(it.getUrl().toString()));
+    private List<Link> filteredLinks() {
+        return linkStorageService.findLinksCheckedFieldLessThenGivenAndUniqueUrl(
+                        OffsetDateTime.now().minus(waitingTimeToRepeatSameRequest)
+                );
     }
 }
 

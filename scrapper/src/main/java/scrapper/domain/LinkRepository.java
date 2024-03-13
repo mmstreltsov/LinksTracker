@@ -20,5 +20,5 @@ public interface LinkRepository {
 
     void updateUpdateField(Link link);
 
-    List<Link> findLinksWithCheckedFieldLessThenGiven(OffsetDateTime time);
+    List<Link> findLinksCheckedFieldLessThenGivenAndUniqueUrl(OffsetDateTime time);
 }

@@ -48,7 +48,6 @@ public class JdbcLinkRepository implements LinkRepository {
     }
 
     @Override
-    @Transactional
     public void removeLink(Link link) {
         jdbcTemplate.update(
                 "DELETE FROM links WHERE id=(?)", link.getId()
@@ -96,9 +95,12 @@ public class JdbcLinkRepository implements LinkRepository {
     }
 
     @Override
-    public List<Link> findLinksWithCheckedFieldLessThenGiven(OffsetDateTime time) {
+    public List<Link> findLinksCheckedFieldLessThenGivenAndUniqueUrl(OffsetDateTime time) {
         return jdbcTemplate.query(
-                "SELECT * FROM links WHERE checked_at < (?) OR checked_at is null",
+                "WITH t as (SELECT l.*, row_number() over (partition by l.url order by random()) as rown FROM links l) " +
+                        "SELECT t.id, t.url, t.updated_at, t.checked_at FROM t " +
+                        "WHERE (t.checked_at < (?) OR t.checked_at is null) " +
+                        "AND t.rown = 1 ",
                 rowMapper,
                 time
         );
