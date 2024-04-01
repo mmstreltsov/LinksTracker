@@ -14,7 +14,6 @@ import scrapper.model.entity.Link;
 import java.sql.PreparedStatement;
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Objects;
 
 @AllArgsConstructor
 @Repository
@@ -26,7 +25,7 @@ public class JdbcLinkRepository implements LinkRepository {
 
     @Override
     @Transactional
-    public Long addLinkAndGetID(Link link) {
+    public Link addLink(Link link) {
         final String insertIntoSql = "INSERT INTO links (url, updated_at, checked_at) VALUES (?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -44,7 +43,13 @@ public class JdbcLinkRepository implements LinkRepository {
                 }, keyHolder
         );
 
-        return Objects.requireNonNull(keyHolder.getKey()).longValue();
+        long id = keyHolder.getKey().longValue();
+        return Link.builder()
+                .id(id)
+                .url(link.getUrl())
+                .checkedAt(link.getCheckedAt())
+                .updatedAt(link.getUpdatedAt())
+                .build();
     }
 
     @Override

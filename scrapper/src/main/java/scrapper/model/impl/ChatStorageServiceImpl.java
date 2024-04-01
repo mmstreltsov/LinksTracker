@@ -6,7 +6,7 @@ import scrapper.domain.ChatRepository;
 import scrapper.model.ChatStorageService;
 import scrapper.model.dto.ChatDTO;
 import scrapper.model.dto.LinkDTO;
-import scrapper.model.dto.MapperEntityToDTO;
+import scrapper.model.dto.MapperEntityWithDTO;
 import scrapper.model.entity.Chat;
 
 import java.util.List;
@@ -15,22 +15,18 @@ import java.util.List;
 public class ChatStorageServiceImpl implements ChatStorageService {
 
     private final ChatRepository chatRepository;
-    private final MapperEntityToDTO mapper;
+    private final MapperEntityWithDTO mapper;
 
     public ChatStorageServiceImpl(@Qualifier("jdbcChatRepository") ChatRepository chatRepository,
-                                  MapperEntityToDTO mapper) {
+                                  MapperEntityWithDTO mapper) {
         this.chatRepository = chatRepository;
         this.mapper = mapper;
     }
 
     @Override
     public ChatDTO addUser(ChatDTO chatDTO) {
-        Long id = chatRepository.addChatAndGetID(mapper.getChat(chatDTO));
-        return ChatDTO.builder()
-                .id(id)
-                .chatId(chatDTO.getChatId())
-                .linkId(chatDTO.getLinkId())
-                .build();
+        Chat chat = chatRepository.addChat(mapper.getChat(chatDTO));
+        return mapper.getChatDto(chat);
     }
 
     @Override

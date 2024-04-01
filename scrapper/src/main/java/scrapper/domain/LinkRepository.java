@@ -6,7 +6,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 public interface LinkRepository {
-    Long addLinkAndGetID(Link link);
+    Link addLink(Link link);
 
     void removeLink(Link link);
 

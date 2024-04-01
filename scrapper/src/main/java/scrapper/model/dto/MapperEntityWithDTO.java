@@ -7,7 +7,7 @@ import scrapper.model.entity.Link;
 import java.util.List;
 
 @Component
-public class MapperEntityToDTO {
+public class MapperEntityWithDTO {
 
 
     public ChatDTO getChatDto(Chat chat) {

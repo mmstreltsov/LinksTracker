@@ -44,12 +44,11 @@ class JdbcLinkRepositoryTest extends IntegrationEnvironment {
                 .updatedAt(OffsetDateTime.now())
                 .build();
 
-        Long id = jdbcLinkRepository.addLinkAndGetID(link);
-        link.setId(id);
+        Link addLink = jdbcLinkRepository.addLink(link);
 
         List<Link> post = jdbcLinkRepository.findAll();
         Assertions.assertAll(
-                () -> Assertions.assertTrue(post.stream().map(Link::getId).toList().contains(link.getId())),
+                () -> Assertions.assertTrue(post.stream().map(Link::getId).toList().contains(addLink.getId())),
                 () -> Assertions.assertEquals(post.size(), prev.size() + 1)
         );
     }
@@ -63,9 +62,9 @@ class JdbcLinkRepositoryTest extends IntegrationEnvironment {
                 .updatedAt(OffsetDateTime.now())
                 .build();
 
-        Long firstId = jdbcLinkRepository.addLinkAndGetID(link);
-        Long secondId = jdbcLinkRepository.addLinkAndGetID(link);
-        Assertions.assertEquals(secondId, firstId + 1);
+        Link link1 = jdbcLinkRepository.addLink(link);
+        Link link2 = jdbcLinkRepository.addLink(link);
+        Assertions.assertEquals(link2.getId(), link1.getId() + 1);
     }
 
     @Test
@@ -77,15 +76,14 @@ class JdbcLinkRepositoryTest extends IntegrationEnvironment {
                 .updatedAt(OffsetDateTime.now())
                 .build();
 
-        Long id = jdbcLinkRepository.addLinkAndGetID(link);
-        link.setId(id);
+        Link addLink = jdbcLinkRepository.addLink(link);
 
         List<Link> prev = jdbcLinkRepository.findAll();
-        jdbcLinkRepository.removeLink(link);
+        jdbcLinkRepository.removeLink(addLink);
         List<Link> post = jdbcLinkRepository.findAll();
 
         Assertions.assertAll(
-                () -> Assertions.assertFalse(post.contains(link)),
+                () -> Assertions.assertFalse(post.contains(addLink)),
                 () -> Assertions.assertEquals(post.size(), prev.size() - 1)
         );
     }
@@ -99,14 +97,12 @@ class JdbcLinkRepositoryTest extends IntegrationEnvironment {
                 .updatedAt(OffsetDateTime.now())
                 .build();
 
-        Long id = jdbcLinkRepository.addLinkAndGetID(link);
-        link.setId(id);
-
-        Link actual = jdbcLinkRepository.findById(id);
+        Link addLink = jdbcLinkRepository.addLink(link);
+        Link actual = jdbcLinkRepository.findById(addLink.getId());
 
         Assertions.assertAll(
-                () -> Assertions.assertEquals(link.getUrl(), actual.getUrl()),
-                () -> Assertions.assertEquals(link.getId(), actual.getId())
+                () -> Assertions.assertEquals(addLink.getUrl(), actual.getUrl()),
+                () -> Assertions.assertEquals(addLink.getId(), actual.getId())
         );
     }
 
@@ -122,7 +118,7 @@ class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         int count = 5;
 
         for (int i = 0; i < count; ++i) {
-            jdbcLinkRepository.addLinkAndGetID(link);
+            jdbcLinkRepository.addLink(link);
         }
 
         List<Link> actual = jdbcLinkRepository.findAllByUrl(link.getUrl().toString());
@@ -141,8 +137,7 @@ class JdbcLinkRepositoryTest extends IntegrationEnvironment {
                 .updatedAt(OffsetDateTime.now())
                 .build();
 
-        Long id = jdbcLinkRepository.addLinkAndGetID(link);
-        link.setId(id);
+        link = jdbcLinkRepository.addLink(link);
 
         jdbcLinkRepository.updateCheckField(link);
 
@@ -166,8 +161,8 @@ class JdbcLinkRepositoryTest extends IntegrationEnvironment {
                 .updatedAt(OffsetDateTime.now())
                 .build();
 
-        jdbcLinkRepository.addLinkAndGetID(link);
-        jdbcLinkRepository.addLinkAndGetID(link);
+        jdbcLinkRepository.addLink(link);
+        jdbcLinkRepository.addLink(link);
 
 
         jdbcLinkRepository.updateCheckField(link);
@@ -195,8 +190,7 @@ class JdbcLinkRepositoryTest extends IntegrationEnvironment {
                 .updatedAt(OffsetDateTime.now())
                 .build();
 
-        Long id = jdbcLinkRepository.addLinkAndGetID(link);
-        link.setId(id);
+        link = jdbcLinkRepository.addLink(link);
         OffsetDateTime middle = OffsetDateTime.now();
 
         jdbcLinkRepository.updateUpdateField(link);
@@ -222,8 +216,8 @@ class JdbcLinkRepositoryTest extends IntegrationEnvironment {
                 .updatedAt(OffsetDateTime.now())
                 .build();
 
-        jdbcLinkRepository.addLinkAndGetID(link);
-        jdbcLinkRepository.addLinkAndGetID(link);
+        jdbcLinkRepository.addLink(link);
+        jdbcLinkRepository.addLink(link);
 
 
         jdbcLinkRepository.updateUpdateField(link);
@@ -255,8 +249,8 @@ class JdbcLinkRepositoryTest extends IntegrationEnvironment {
                     .checkedAt(now.plusMinutes(i))
                     .build();
 
-            Long id = jdbcLinkRepository.addLinkAndGetID(link);
-            ids.add(id);
+            link = jdbcLinkRepository.addLink(link);
+            ids.add(link.getId());
         }
 
         List<Link> linkS = jdbcLinkRepository.findLinksCheckedFieldLessThenGivenAndUniqueUrl(OffsetDateTime.now().plusMinutes(5).plusSeconds(15));
@@ -280,7 +274,7 @@ class JdbcLinkRepositoryTest extends IntegrationEnvironment {
                     .checkedAt(OffsetDateTime.MIN)
                     .build();
 
-            jdbcLinkRepository.addLinkAndGetID(link);
+            jdbcLinkRepository.addLink(link);
         }
 
         List<Link> linkS = jdbcLinkRepository.findLinksCheckedFieldLessThenGivenAndUniqueUrl(OffsetDateTime.now());
@@ -299,11 +293,11 @@ class JdbcLinkRepositoryTest extends IntegrationEnvironment {
                 .url(URI.create("stub"))
                 .build();
 
-        Long id = jdbcLinkRepository.addLinkAndGetID(link);
+        link = jdbcLinkRepository.addLink(link);
 
         List<Link> linkS = jdbcLinkRepository.findLinksCheckedFieldLessThenGivenAndUniqueUrl(OffsetDateTime.now().plusMinutes(5).plusSeconds(15));
         List<Long> actual = linkS.stream().map(Link::getId).toList();
 
-        Assertions.assertTrue(actual.contains(id));
+        Assertions.assertTrue(actual.contains(link.getId()));
     }
 }

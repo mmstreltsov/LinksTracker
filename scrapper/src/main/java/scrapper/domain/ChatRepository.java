@@ -6,7 +6,7 @@ import scrapper.model.entity.Link;
 import java.util.List;
 
 public interface ChatRepository {
-    Long addChatAndGetID(Chat chat);
+    Chat addChat(Chat chat);
 
     void removeChatById(Long id);
 

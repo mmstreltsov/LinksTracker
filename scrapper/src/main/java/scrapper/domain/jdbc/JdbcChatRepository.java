@@ -14,7 +14,6 @@ import scrapper.model.entity.Link;
 
 import java.sql.PreparedStatement;
 import java.util.List;
-import java.util.Objects;
 
 @AllArgsConstructor
 @Repository
@@ -26,7 +25,7 @@ public class JdbcChatRepository implements ChatRepository {
 
     @Override
     @Transactional
-    public Long addChatAndGetID(Chat chat) {
+    public Chat addChat(Chat chat) {
         final String insertIntoSql = "INSERT INTO chat (chat_id, link_id) VALUES (?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -39,7 +38,8 @@ public class JdbcChatRepository implements ChatRepository {
                 }, keyHolder
         );
 
-        return Objects.requireNonNull(keyHolder.getKey()).longValue();
+        long id = keyHolder.getKey().longValue();
+        return new Chat(id, chat.getChatId(), chat.getLinkId());
     }
 
     @Override

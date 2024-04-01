@@ -5,7 +5,8 @@ import org.springframework.stereotype.Service;
 import scrapper.domain.LinkRepository;
 import scrapper.model.LinkStorageService;
 import scrapper.model.dto.LinkDTO;
-import scrapper.model.dto.MapperEntityToDTO;
+import scrapper.model.dto.MapperEntityWithDTO;
+import scrapper.model.entity.Link;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -14,21 +15,18 @@ import java.util.List;
 public class LinkStorageServiceImpl implements LinkStorageService {
 
     private final LinkRepository linkRepository;
-    private final MapperEntityToDTO mapper;
+    private final MapperEntityWithDTO mapper;
 
     public LinkStorageServiceImpl(@Qualifier("jdbcLinkRepository") LinkRepository linkRepository,
-                                  MapperEntityToDTO mapper) {
+                                  MapperEntityWithDTO mapper) {
         this.linkRepository = linkRepository;
         this.mapper = mapper;
     }
 
     @Override
     public LinkDTO addLink(LinkDTO linkDTO) {
-        Long id = linkRepository.addLinkAndGetID(mapper.getLink(linkDTO));
-        return LinkDTO.builder()
-                .id(id)
-                .url(linkDTO.getUrl())
-                .build();
+        Link link = linkRepository.addLink(mapper.getLink(linkDTO));
+        return mapper.getLinkDto(link);
     }
 
     @Override

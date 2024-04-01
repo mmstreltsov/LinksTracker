@@ -37,7 +37,7 @@ class JdbcChatRepositoryTest extends IntegrationEnvironment {
                 .updatedAt(OffsetDateTime.now())
                 .build();
 
-        jdbcLinkRepository.addLinkAndGetID(link);
+        jdbcLinkRepository.addLink(link);
     }
 
     @Test
@@ -51,7 +51,7 @@ class JdbcChatRepositoryTest extends IntegrationEnvironment {
     @Test
     @Transactional
     @Rollback
-    void addChatWithLinkAndGetID_testInsertElem() {
+    void addChat_testInsertElem() {
         initializeLinkObject();
         List<Chat> prev = jdbcChatRepository.findAll();
 
@@ -60,12 +60,11 @@ class JdbcChatRepositoryTest extends IntegrationEnvironment {
                 .linkId(1L)
                 .build();
 
-        Long id = jdbcChatRepository.addChatAndGetID(chat);
-        chat.setId(id);
+        Chat addChat = jdbcChatRepository.addChat(chat);
 
         List<Chat> post = jdbcChatRepository.findAll();
         Assertions.assertAll(
-                () -> Assertions.assertTrue(post.contains(chat)),
+                () -> Assertions.assertTrue(post.contains(addChat)),
                 () -> Assertions.assertEquals(post.size(), prev.size() + 1)
         );
     }
@@ -73,7 +72,7 @@ class JdbcChatRepositoryTest extends IntegrationEnvironment {
     @Test
     @Transactional
     @Rollback
-    void addChatWithLinkAndGetID_testValidIdSetter() {
+    void addChat_testValidIdSetter() {
         initializeLinkObject();
 
         Chat chat = Chat.builder()
@@ -81,9 +80,10 @@ class JdbcChatRepositoryTest extends IntegrationEnvironment {
                 .linkId(1L)
                 .build();
 
-        Long firstId = jdbcChatRepository.addChatAndGetID(chat);
-        Long secondId = jdbcChatRepository.addChatAndGetID(chat);
-        Assertions.assertEquals(secondId, firstId + 1);
+        Chat chat1 = jdbcChatRepository.addChat(chat);
+        Chat chat2 = jdbcChatRepository.addChat(chat);
+
+        Assertions.assertEquals(chat2.getId(), chat1.getId() + 1);
     }
 
     @Test
@@ -97,7 +97,7 @@ class JdbcChatRepositoryTest extends IntegrationEnvironment {
                 .build();
         int count = 5;
         for (int i = 0; i < count; i++) {
-            jdbcChatRepository.addChatAndGetID(chat);
+            jdbcChatRepository.addChat(chat);
         }
 
         List<Chat> prev = jdbcChatRepository.findAll();
@@ -120,7 +120,7 @@ class JdbcChatRepositoryTest extends IntegrationEnvironment {
 
         int count = 5;
         for (int i = 0; i < count; i++) {
-            jdbcChatRepository.addChatAndGetID(chat);
+            jdbcChatRepository.addChat(chat);
         }
 
         List<Chat> post = jdbcChatRepository.findAllByChatId(chat.getChatId());
@@ -138,13 +138,13 @@ class JdbcChatRepositoryTest extends IntegrationEnvironment {
         urls.stream().parallel()
                 .map(URI::create)
                 .forEach(it -> {
-                    Long id = jdbcLinkRepository.addLinkAndGetID(Link.builder().url(it).build());
+                    Link link = jdbcLinkRepository.addLink(Link.builder().url(it).build());
 
                     Chat chat = Chat.builder()
                             .chatId(chatId)
-                            .linkId(id)
+                            .linkId(link.getId())
                             .build();
-                    jdbcChatRepository.addChatAndGetID(chat);
+                    jdbcChatRepository.addChat(chat);
                 });
 
 
@@ -162,7 +162,7 @@ class JdbcChatRepositoryTest extends IntegrationEnvironment {
                 .chatId(-5L)
                 .linkId(1L)
                 .build();
-        jdbcChatRepository.addChatAndGetID(chat);
+        jdbcChatRepository.addChat(chat);
 
 
         Chat actual = jdbcChatRepository.findChatByChatIdAndLinkId(chat.getChatId(), chat.getLinkId());
@@ -177,18 +177,16 @@ class JdbcChatRepositoryTest extends IntegrationEnvironment {
     @Rollback
     void findAllByCurrentLinkUrl_testCorrectLogic() {
         String url = "ahaha_ohohoho";
-        Long id = jdbcLinkRepository.addLinkAndGetID(Link.builder().url(URI.create(url)).build());
+        Link link = jdbcLinkRepository.addLink(Link.builder().url(URI.create(url)).build());
 
         List<Chat> chatList = new ArrayList<>();
         for (int i = 0; i < 5; ++i) {
             Chat chat = Chat.builder()
                     .chatId(-1L)
-                    .linkId(id)
+                    .linkId(link.getId())
                     .build();
 
-            Long idChat = jdbcChatRepository.addChatAndGetID(chat);
-            chat.setId(idChat);
-
+            chat = jdbcChatRepository.addChat(chat);
             chatList.add(chat);
         }
 
