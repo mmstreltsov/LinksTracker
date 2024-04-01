@@ -38,8 +38,8 @@ public class SelectLinkAndExecuteActionServiceImpl implements SelectLinkAndExecu
 
     private List<LinkDTO> filteredLinks() {
         return linkStorageService.findLinksCheckedFieldLessThenGivenAndUniqueUrl(
-                        OffsetDateTime.now().minus(waitingTimeToRepeatSameRequest)
-                );
+                OffsetDateTime.now().minus(waitingTimeToRepeatSameRequest)
+        );
     }
 }
 

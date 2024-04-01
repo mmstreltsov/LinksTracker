@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import scrapper.controllers.dto.AddLinkRequest;
-import scrapper.controllers.dto.ApiErrorResponse;
 import scrapper.controllers.dto.LinkResponse;
 import scrapper.controllers.dto.ListLinksResponse;
 import scrapper.controllers.dto.RemoveLinkRequest;
+import scrapper.controllers.errors.ClientException;
 import scrapper.model.ChatStorageService;
 import scrapper.model.LinkStorageService;
 import scrapper.model.dto.ChatDTO;
@@ -51,10 +51,7 @@ public class ScrapperController {
                 .toList();
 
         if (links.isEmpty()) {
-            ApiErrorResponse response = ApiErrorResponse.builder()
-                    .description("No tracked links")
-                    .build();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            throw new ClientException(HttpStatus.NO_CONTENT.value(), "No tracked links");
         }
 
         ListLinksResponse listLinksResponse = new ListLinksResponse(links, links.size());
@@ -68,10 +65,7 @@ public class ScrapperController {
                 .anyMatch(it -> Objects.equals(it, request.link));
 
         if (isLinkAlreadyTracked) {
-            ApiErrorResponse response = ApiErrorResponse.builder()
-                    .description("Link is already tracked")
-                    .build();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            throw new ClientException(HttpStatus.BAD_REQUEST.value(), "No tracked links");
         }
 
         LinkDTO linkDTO = LinkDTO.builder()
@@ -107,10 +101,7 @@ public class ScrapperController {
 
         boolean isLinkTracked = Objects.nonNull(tracked);
         if (!isLinkTracked) {
-            ApiErrorResponse response = ApiErrorResponse.builder()
-                    .description("Link is not found")
-                    .build();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            throw new ClientException(HttpStatus.BAD_REQUEST.value(), "Link is not found");
         }
 
         chatStorageService.removeByChatIdAndLinkId(chatId, tracked.getId());

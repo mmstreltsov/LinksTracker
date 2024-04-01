@@ -1,11 +1,13 @@
 package scrapper.service.impl;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ru.tinkoff.dto.LinkParserServiceResponse;
 import ru.tinkoff.utils.ServiceNames;
 import scrapper.client.StackoverflowClient;
 import scrapper.client.dto.StackoverflowUnitServiceResponse;
+import scrapper.controllers.errors.ClientException;
 import scrapper.service.GetInfoFromApiService;
 import scrapper.service.dto.LastUpdatedDTO;
 
@@ -19,14 +21,14 @@ public class StackoverflowInfo implements GetInfoFromApiService {
     @Override
     public LastUpdatedDTO getInfo(LinkParserServiceResponse meta) {
         if (!meta.service().equals(serviceName)) {
-            throw new IllegalStateException("Not that service");
+            throw new IllegalArgumentException("Not that service");
         }
 
         StackoverflowUnitServiceResponse infoFromQuestion;
         try {
             infoFromQuestion = stackoverflowClient.getInfoFromQuestion(meta.value());
         } catch (Throwable ex) {
-            throw new IllegalArgumentException("Request went wrong: " + ex.getMessage());
+            throw new IllegalStateException("Request went wrong: " + ex.getMessage());
         }
 
         return LastUpdatedDTO.builder()

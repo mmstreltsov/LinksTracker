@@ -1,11 +1,13 @@
 package scrapper.service.impl;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ru.tinkoff.dto.LinkParserServiceResponse;
 import ru.tinkoff.utils.ServiceNames;
 import scrapper.client.GithubClient;
 import scrapper.client.dto.GithubServiceUnitResponse;
+import scrapper.controllers.errors.ClientException;
 import scrapper.service.GetInfoFromApiService;
 import scrapper.service.dto.LastUpdatedDTO;
 
@@ -19,7 +21,7 @@ public class GithubInfo implements GetInfoFromApiService {
     @Override
     public LastUpdatedDTO getInfo(LinkParserServiceResponse meta) {
         if (!meta.service().equals(serviceName)) {
-            throw new IllegalStateException("Not that service");
+            throw new IllegalArgumentException("Not that service");
         }
 
         GithubServiceUnitResponse[] repositoryInfo;
@@ -27,11 +29,11 @@ public class GithubInfo implements GetInfoFromApiService {
         try {
             repositoryInfo = githubClient.getRepositoryInfo(meta.value());
         } catch (Throwable ex) {
-            throw new IllegalArgumentException("Request went wrong: " + ex.getMessage());
+            throw new IllegalStateException("Request went wrong: " + ex.getMessage());
         }
 
         if (repositoryInfo.length == 0) {
-            throw new IllegalArgumentException("Nothing to check");
+            throw new IllegalStateException("Nothing to check. Empty response from API");
         }
         GithubServiceUnitResponse lastUnitInfo = repositoryInfo[0];
 

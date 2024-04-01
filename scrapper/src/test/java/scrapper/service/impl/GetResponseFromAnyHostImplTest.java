@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.tinkoff.dto.LinkParserServiceResponse;
 import ru.tinkoff.service.LinkParserService;
 import ru.tinkoff.utils.ServiceNames;
+import scrapper.controllers.errors.ClientException;
 import scrapper.service.dto.LastUpdatedDTO;
 
 import java.time.OffsetDateTime;
@@ -40,7 +41,7 @@ class GetResponseFromAnyHostImplTest {
         Mockito.when(linkParserService.getResponseFromAnyHost(Mockito.any()))
                 .thenReturn(Optional.empty());
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> getResponseFromAnyHost.getResponse("ahaha"));
+        Assertions.assertThrows(ClientException.class, () -> getResponseFromAnyHost.getResponse("ahaha"));
     }
 
     @Test
