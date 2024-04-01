@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import scrapper.model.LinkStorageService;
-import scrapper.model.entity.Link;
+import scrapper.model.dto.LinkDTO;
 import scrapper.service.SelectLinkAndExecuteActionService;
 import scrapper.service.UpdateAndSendLinkService;
 
@@ -36,7 +36,7 @@ public class SelectLinkAndExecuteActionServiceImpl implements SelectLinkAndExecu
         );
     }
 
-    private List<Link> filteredLinks() {
+    private List<LinkDTO> filteredLinks() {
         return linkStorageService.findLinksCheckedFieldLessThenGivenAndUniqueUrl(
                         OffsetDateTime.now().minus(waitingTimeToRepeatSameRequest)
                 );

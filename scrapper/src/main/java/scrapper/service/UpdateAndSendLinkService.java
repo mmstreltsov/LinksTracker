@@ -1,8 +1,8 @@
 package scrapper.service;
 
-import scrapper.model.entity.Link;
+import scrapper.model.dto.LinkDTO;
 
 public interface UpdateAndSendLinkService {
 
-    void handle(Link link);
+    void handle(LinkDTO linkDTO);
 }

@@ -1,18 +1,18 @@
 package scrapper.model;
 
-import scrapper.model.entity.Link;
+import scrapper.model.dto.LinkDTO;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
 public interface LinkStorageService {
-    Link addLink(Link link);
+    LinkDTO addLink(LinkDTO linkDTO);
 
-    void removeLink(Link link);
+    void removeLink(LinkDTO linkDTO);
 
-    List<Link> findAll();
-    Link findLinkById(Long id);
-    void setCheckFieldToNow(Link link);
-    void setUpdateFieldToNow(Link link);
-    List<Link> findLinksCheckedFieldLessThenGivenAndUniqueUrl(OffsetDateTime time);
+    List<LinkDTO> findAll();
+    LinkDTO findLinkById(Long id);
+    void setCheckFieldToNow(LinkDTO linkDTO);
+    void setUpdateFieldToNow(LinkDTO linkDTO);
+    List<LinkDTO> findLinksCheckedFieldLessThenGivenAndUniqueUrl(OffsetDateTime time);
 }

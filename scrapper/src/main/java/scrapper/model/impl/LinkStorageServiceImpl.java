@@ -4,7 +4,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import scrapper.domain.LinkRepository;
 import scrapper.model.LinkStorageService;
-import scrapper.model.entity.Link;
+import scrapper.model.dto.LinkDTO;
+import scrapper.model.dto.MapperEntityToDTO;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -13,48 +14,51 @@ import java.util.List;
 public class LinkStorageServiceImpl implements LinkStorageService {
 
     private final LinkRepository linkRepository;
+    private final MapperEntityToDTO mapper;
 
-    public LinkStorageServiceImpl(@Qualifier("jdbcLinkRepository") LinkRepository linkRepository) {
+    public LinkStorageServiceImpl(@Qualifier("jdbcLinkRepository") LinkRepository linkRepository,
+                                  MapperEntityToDTO mapper) {
         this.linkRepository = linkRepository;
+        this.mapper = mapper;
     }
 
     @Override
-    public Link addLink(Link link) {
-        Long id = linkRepository.addLinkAndGetID(link);
-        return Link.builder()
+    public LinkDTO addLink(LinkDTO linkDTO) {
+        Long id = linkRepository.addLinkAndGetID(mapper.getLink(linkDTO));
+        return LinkDTO.builder()
                 .id(id)
-                .url(link.getUrl())
+                .url(linkDTO.getUrl())
                 .build();
     }
 
     @Override
-    public void removeLink(Link link) {
-        linkRepository.removeLink(link);
+    public void removeLink(LinkDTO linkDTO) {
+        linkRepository.removeLink(mapper.getLink(linkDTO));
     }
 
     @Override
-    public List<Link> findAll() {
-        return linkRepository.findAll();
+    public List<LinkDTO> findAll() {
+        return mapper.getLinkDtoList(linkRepository.findAll());
     }
 
 
     @Override
-    public Link findLinkById(Long id) {
-        return linkRepository.findById(id);
+    public LinkDTO findLinkById(Long id) {
+        return mapper.getLinkDto(linkRepository.findById(id));
     }
 
     @Override
-    public void setCheckFieldToNow(Link link) {
-        linkRepository.updateCheckField(link);
+    public void setCheckFieldToNow(LinkDTO linkDTO) {
+        linkRepository.updateCheckField(mapper.getLink(linkDTO));
     }
 
     @Override
-    public void setUpdateFieldToNow(Link link) {
-        linkRepository.updateUpdateField(link);
+    public void setUpdateFieldToNow(LinkDTO linkDTO) {
+        linkRepository.updateUpdateField(mapper.getLink(linkDTO));
     }
 
     @Override
-    public List<Link> findLinksCheckedFieldLessThenGivenAndUniqueUrl(OffsetDateTime time) {
-        return linkRepository.findLinksCheckedFieldLessThenGivenAndUniqueUrl(time);
+    public List<LinkDTO> findLinksCheckedFieldLessThenGivenAndUniqueUrl(OffsetDateTime time) {
+        return mapper.getLinkDtoList(linkRepository.findLinksCheckedFieldLessThenGivenAndUniqueUrl(time));
     }
 }

@@ -1,4 +1,4 @@
-package scrapper.model.entity;
+package scrapper.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,7 +10,7 @@ import java.time.OffsetDateTime;
 @Data
 @Builder
 @AllArgsConstructor
-public class Link {
+public class LinkDTO {
     private Long id;
     private URI url;
     private OffsetDateTime updatedAt;

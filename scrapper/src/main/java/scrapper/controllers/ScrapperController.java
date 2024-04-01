@@ -17,8 +17,8 @@ import scrapper.controllers.dto.ListLinksResponse;
 import scrapper.controllers.dto.RemoveLinkRequest;
 import scrapper.model.ChatStorageService;
 import scrapper.model.LinkStorageService;
-import scrapper.model.entity.Chat;
-import scrapper.model.entity.Link;
+import scrapper.model.dto.ChatDTO;
+import scrapper.model.dto.LinkDTO;
 
 import java.net.URI;
 import java.util.List;
@@ -38,13 +38,13 @@ public class ScrapperController {
 
     @DeleteMapping("/tg-chat/{id}")
     public ResponseEntity<Object> deleteChat(@PathVariable("id") Long id) {
-        chatStorageService.removeUser(id);
+        chatStorageService.removeEveryRowForUser(id);
         return ResponseEntity.status(HttpStatus.OK).body("");
     }
 
     @GetMapping("/links")
     public ResponseEntity<Object> getLinks(@RequestHeader("Tg-Chat-Id") Long chatId) {
-        List<Link> chats = chatStorageService.findAllLinksByChatId(chatId);
+        List<LinkDTO> chats = chatStorageService.findAllLinksByChatId(chatId);
 
         List<LinkResponse> links = chats.stream()
                 .map(it -> new LinkResponse(it.getId(), it.getUrl().toString()))
@@ -74,32 +74,32 @@ public class ScrapperController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
-        Link link = Link.builder()
+        LinkDTO linkDTO = LinkDTO.builder()
                 .url(URI.create(request.link))
                 .build();
-        link = linkStorageService.addLink(link);
+        linkDTO = linkStorageService.addLink(linkDTO);
 
-        Chat chat = Chat.builder()
+        ChatDTO chatDTO = ChatDTO.builder()
                 .chatId(chatId)
-                .linkId(link.getId())
+                .linkId(linkDTO.getId())
                 .build();
 
-        chatStorageService.addUser(chat);
+        chatStorageService.addUser(chatDTO);
 
-        LinkResponse linkResponse = new LinkResponse(chatId, link.getUrl().toString());
+        LinkResponse linkResponse = new LinkResponse(chatId, linkDTO.getUrl().toString());
         return ResponseEntity.status(HttpStatus.OK).body(linkResponse);
     }
 
     @PostMapping("/links/delete")
     public ResponseEntity<Object> removeLink(@RequestHeader("Tg-Chat-Id") Long chatId, @RequestBody RemoveLinkRequest request) {
-        List<Link> links = chatStorageService.findAllLinksByChatId(chatId);
+        List<LinkDTO> linkDTOS = chatStorageService.findAllLinksByChatId(chatId);
 
-        Link tracked = null;
-        for (Link it : links) {
+        LinkDTO tracked = null;
+        for (LinkDTO it : linkDTOS) {
             if (!it.getUrl().toString().equals(request.link)) {
                 continue;
             }
-            tracked = Link.builder()
+            tracked = LinkDTO.builder()
                     .id(it.getId())
                     .url(it.getUrl())
                     .build();

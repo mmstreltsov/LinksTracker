@@ -171,6 +171,7 @@ class JdbcChatRepositoryTest extends IntegrationEnvironment {
                 () -> Assertions.assertEquals(chat.getLinkId(), actual.getLinkId())
         );
     }
+
     @Test
     @Transactional
     @Rollback

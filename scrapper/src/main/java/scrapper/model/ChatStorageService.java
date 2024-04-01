@@ -1,20 +1,20 @@
 package scrapper.model;
 
-import scrapper.model.entity.Chat;
-import scrapper.model.entity.Link;
+import scrapper.model.dto.ChatDTO;
+import scrapper.model.dto.LinkDTO;
 
 import java.util.List;
 
 public interface ChatStorageService {
-    Chat addUser(Chat chat);
+    ChatDTO addUser(ChatDTO chatDTO);
 
-    void removeUser(Long chatId);
+    void removeEveryRowForUser(Long chatId);
 
     void removeByChatIdAndLinkId(Long chatId, Long linkId);
 
-    List<Chat> findAllChatsByChatId(Long id);
+    List<ChatDTO> findAllChatsByChatId(Long id);
 
-    List<Chat> findAllChatsByCurrentUrl(String url);
+    List<ChatDTO> findAllChatsByCurrentUrl(String url);
 
-    List<Link> findAllLinksByChatId(Long id);
+    List<LinkDTO> findAllLinksByChatId(Long id);
 }
