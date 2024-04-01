@@ -12,8 +12,8 @@ public class MapperEntityWithDTO {
 
     public ChatDTO getChatDto(Chat chat) {
         return ChatDTO.builder()
-                .chatId(chat.getId())
                 .id(chat.getId())
+                .chatId(chat.getChatId())
                 .linkId(chat.getLinkId())
                 .build();
     }
@@ -24,6 +24,7 @@ public class MapperEntityWithDTO {
 
     public LinkDTO getLinkDto(Link link) {
         return LinkDTO.builder()
+                .id(link.getId())
                 .url(link.getUrl())
                 .checkedAt(link.getCheckedAt())
                 .updatedAt(link.getUpdatedAt())
@@ -36,14 +37,15 @@ public class MapperEntityWithDTO {
 
     public Chat getChat(ChatDTO chat) {
         return Chat.builder()
-                .chatId(chat.getId())
                 .id(chat.getId())
+                .chatId(chat.getChatId())
                 .linkId(chat.getLinkId())
                 .build();
     }
 
     public Link getLink(LinkDTO link) {
         return Link.builder()
+                .id(link.getId())
                 .url(link.getUrl())
                 .checkedAt(link.getCheckedAt())
                 .updatedAt(link.getUpdatedAt())

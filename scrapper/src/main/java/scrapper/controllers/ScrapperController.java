@@ -65,7 +65,7 @@ public class ScrapperController {
                 .anyMatch(it -> Objects.equals(it, request.link));
 
         if (isLinkAlreadyTracked) {
-            throw new ClientException(HttpStatus.BAD_REQUEST.value(), "No tracked links");
+            throw new ClientException(HttpStatus.BAD_REQUEST.value(), "Link is already tracked");
         }
 
         LinkDTO linkDTO = LinkDTO.builder()

@@ -102,8 +102,6 @@ class ListCommandTest {
                 .build();
         Mockito.doThrow(apiErrorResponse).when(scrapperClient).getTrackedLinks(Mockito.any());
 
-        String actual = listCommand.handle(update);
-
-        Assertions.assertTrue(actual.contains("Unsuccessful"), "Incorrect message: " + actual);
+        Assertions.assertThrows(ApiErrorResponse.class, () -> listCommand.handle(update));
     }
 }

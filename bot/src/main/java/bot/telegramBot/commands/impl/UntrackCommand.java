@@ -1,7 +1,6 @@
 package bot.telegramBot.commands.impl;
 
 import bot.client.ScrapperClient;
-import bot.client.dto.ApiErrorResponse;
 import bot.client.dto.LinkResponse;
 import bot.telegramBot.commands.Command;
 import bot.telegramBot.commands.CommandInfo;
@@ -33,23 +32,18 @@ public class UntrackCommand implements Command {
 
     @Override
     public String handle(Update update) {
-        try {
-            log.info("Начинаем антрэк");
-            Long id = update.message().chat().id();
-            URI link = UriHandler.getLinkFromMessage(update);
+        log.info("Начинаем антрэк");
+        Long id = update.message().chat().id();
+        URI link = UriHandler.getLinkFromMessage(update);
 
-            log.info("Вот: " + id + ", " + link);
-            LinkResponse linkResponse = scrapperClient.removeLink(id, link);
-            if (linkResponse != null) {
-                log.info("resp: " + linkResponse.id + " " + linkResponse.url.toString());
-            } else {
-                log.info("Пустой ответ");
-            }
-
-            return BotResponse.LINK_SUCCESSFUL_UNTRACKED.msg;
-        } catch (ApiErrorResponse ex) {
-            log.debug("failed to exec " + command() + ": " + ex.description);
-            return ex.description;
+        log.info("Вот: " + id + ", " + link);
+        LinkResponse linkResponse = scrapperClient.removeLink(id, link);
+        if (linkResponse != null) {
+            log.info("resp: " + linkResponse.id + " " + linkResponse.url.toString());
+        } else {
+            log.info("Пустой ответ");
         }
+
+        return BotResponse.LINK_SUCCESSFUL_UNTRACKED.msg;
     }
 }

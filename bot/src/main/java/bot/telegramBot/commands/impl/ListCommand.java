@@ -1,7 +1,6 @@
 package bot.telegramBot.commands.impl;
 
 import bot.client.ScrapperClient;
-import bot.client.dto.ApiErrorResponse;
 import bot.client.dto.ListLinksResponse;
 import bot.telegramBot.commands.Command;
 import bot.telegramBot.commands.CommandInfo;
@@ -30,21 +29,15 @@ public class ListCommand implements Command {
 
     @Override
     public String handle(Update update) {
-        try {
-            Long id = update.message().chat().id();
+        Long id = update.message().chat().id();
 
-            ListLinksResponse links = scrapperClient.getTrackedLinks(id);
-            if (links.size == null) {
-                throw new RuntimeException("Server return null: maybe you are not registered");
-            }
-            if (links.size == 0) {
-                return BotResponse.NO_TRACKED_LINKS.msg;
-            }
-            return links.links.toString();
-
-        } catch (ApiErrorResponse ex) {
-            log.debug("failed to exec " + command() + ": " + ex.description);
-            return ex.description;
+        ListLinksResponse links = scrapperClient.getTrackedLinks(id);
+        if (links.size == null) {
+            throw new RuntimeException("Server return null: maybe you are not registered");
         }
+        if (links.size == 0) {
+            return BotResponse.NO_TRACKED_LINKS.msg;
+        }
+        return links.links.toString();
     }
 }

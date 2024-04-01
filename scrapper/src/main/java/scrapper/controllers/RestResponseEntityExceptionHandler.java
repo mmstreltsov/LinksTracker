@@ -1,5 +1,6 @@
 package scrapper.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,13 +12,15 @@ import scrapper.controllers.dto.ApiErrorResponse;
 import scrapper.controllers.errors.ClientException;
 
 @ControllerAdvice
+@Slf4j
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
         ApiErrorResponse bodyOfResponse = ApiErrorResponse.builder()
-                .exceptionName("Server undefined exception")
-                .exceptionMessage(ex.getMessage())
+                .description("Server undefined exception: " + ex.getMessage())
                 .build();
+
+        log.info("Server error: " + ex.getMessage());
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
     }
 
@@ -25,7 +28,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     protected ResponseEntity<Object> handleConflictClientException(ClientException ex, WebRequest request) {
         ApiErrorResponse bodyOfResponse = ApiErrorResponse.builder()
                 .code(String.valueOf(ex.getCode()))
-                .exceptionMessage(ex.getMessage())
+                .description(ex.getMessage())
                 .build();
 
         HttpStatus status;
@@ -35,6 +38,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
             status = HttpStatus.BAD_REQUEST;
         }
 
+        log.info("Client error: " + ex.getMessage());
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), status, request);
     }
 }
