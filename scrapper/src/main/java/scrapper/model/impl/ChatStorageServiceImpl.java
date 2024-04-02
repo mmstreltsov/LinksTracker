@@ -30,11 +30,6 @@ public class ChatStorageServiceImpl implements ChatStorageService {
     }
 
     @Override
-    public List<ChatDTO> findAllChatsByChatId(Long id) {
-        return mapper.getChatDtoList(chatRepository.findAllByChatId(id));
-    }
-
-    @Override
     public List<ChatDTO> findAllChatsByCurrentUrl(String url) {
         return mapper.getChatDtoList(chatRepository.findAllByCurrentLinkUrl(url));
     }
@@ -47,8 +42,7 @@ public class ChatStorageServiceImpl implements ChatStorageService {
 
     @Override
     public void removeEveryRowForUser(Long chatId) {
-        ChatDTO chatDTO = ChatDTO.builder().chatId(chatId).build();
-        chatRepository.removeEveryChatByChatId(mapper.getChat(chatDTO));
+        chatRepository.removeEveryChatByChatId(chatId);
     }
 
     @Override

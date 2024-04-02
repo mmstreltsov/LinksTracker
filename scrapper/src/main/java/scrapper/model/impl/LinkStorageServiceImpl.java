@@ -35,17 +35,6 @@ public class LinkStorageServiceImpl implements LinkStorageService {
     }
 
     @Override
-    public List<LinkDTO> findAll() {
-        return mapper.getLinkDtoList(linkRepository.findAll());
-    }
-
-
-    @Override
-    public LinkDTO findLinkById(Long id) {
-        return mapper.getLinkDto(linkRepository.findById(id));
-    }
-
-    @Override
     public void setCheckFieldToNow(LinkDTO linkDTO) {
         linkRepository.updateCheckField(mapper.getLink(linkDTO));
     }

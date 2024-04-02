@@ -51,9 +51,9 @@ public class JdbcChatRepository implements ChatRepository {
 
     @Override
     @Transactional
-    public void removeEveryChatByChatId(Chat chat) {
+    public void removeEveryChatByChatId(Long chatId) {
         jdbcTemplate.update(
-                "DELETE FROM chat WHERE chat_id=(?);", chat.getChatId()
+                "DELETE FROM chat WHERE chat_id=(?);", chatId
         );
     }
 

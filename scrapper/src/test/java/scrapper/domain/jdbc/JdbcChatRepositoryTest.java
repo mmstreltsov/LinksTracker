@@ -101,7 +101,7 @@ class JdbcChatRepositoryTest extends IntegrationEnvironment {
         }
 
         List<Chat> prev = jdbcChatRepository.findAll();
-        jdbcChatRepository.removeEveryChatByChatId(chat);
+        jdbcChatRepository.removeEveryChatByChatId(chat.getChatId());
         List<Chat> post = jdbcChatRepository.findAll();
 
         Assertions.assertEquals(prev.size() - count, post.size());

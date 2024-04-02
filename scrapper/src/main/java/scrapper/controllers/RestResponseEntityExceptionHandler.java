@@ -21,7 +21,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
                 .build();
 
         log.info("Server error: " + ex.getMessage());
-        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.SERVICE_UNAVAILABLE, request);
     }
 
     @ExceptionHandler(ClientException.class)

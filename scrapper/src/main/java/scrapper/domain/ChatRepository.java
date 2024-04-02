@@ -10,7 +10,7 @@ public interface ChatRepository {
 
     void removeChatById(Long id);
 
-    void removeEveryChatByChatId(Chat chat);
+    void removeEveryChatByChatId(Long chatId);
 
     List<Chat> findAll();
 

@@ -3,6 +3,7 @@ package scrapper.model.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -10,6 +11,7 @@ import java.time.OffsetDateTime;
 @Data
 @Builder
 @AllArgsConstructor
+@EqualsAndHashCode
 public class LinkDTO {
     private Long id;
     private URI url;

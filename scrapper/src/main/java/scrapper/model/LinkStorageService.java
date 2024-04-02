@@ -10,8 +10,6 @@ public interface LinkStorageService {
 
     void removeLink(LinkDTO linkDTO);
 
-    List<LinkDTO> findAll();
-    LinkDTO findLinkById(Long id);
     void setCheckFieldToNow(LinkDTO linkDTO);
     void setUpdateFieldToNow(LinkDTO linkDTO);
     List<LinkDTO> findLinksCheckedFieldLessThenGivenAndUniqueUrl(OffsetDateTime time);

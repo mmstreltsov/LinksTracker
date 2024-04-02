@@ -9,7 +9,6 @@ import java.util.List;
 @Component
 public class MapperEntityWithDTO {
 
-
     public ChatDTO getChatDto(Chat chat) {
         return ChatDTO.builder()
                 .id(chat.getId())

@@ -29,6 +29,7 @@ public class ScrapperClientImpl implements ScrapperClient {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, r -> r.bodyToMono(ApiErrorResponse.class))
+                .onStatus(HttpStatusCode::is5xxServerError, r -> r.bodyToMono(ApiErrorResponse.class))
                 .toEntity(Object.class)
                 .block();
     }
@@ -40,6 +41,7 @@ public class ScrapperClientImpl implements ScrapperClient {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, r -> r.bodyToMono(ApiErrorResponse.class))
+                .onStatus(HttpStatusCode::is5xxServerError, r -> r.bodyToMono(ApiErrorResponse.class))
                 .toEntity(Object.class)
                 .block();
     }
@@ -52,6 +54,7 @@ public class ScrapperClientImpl implements ScrapperClient {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, r -> r.bodyToMono(ApiErrorResponse.class))
+                .onStatus(HttpStatusCode::is5xxServerError, r -> r.bodyToMono(ApiErrorResponse.class))
                 .toEntity(ListLinksResponse.class)
                 .block();
 
@@ -71,6 +74,7 @@ public class ScrapperClientImpl implements ScrapperClient {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, r -> r.bodyToMono(ApiErrorResponse.class))
+                .onStatus(HttpStatusCode::is5xxServerError, r -> r.bodyToMono(ApiErrorResponse.class))
                 .toEntity(LinkResponse.class)
                 .block();
 
@@ -93,6 +97,7 @@ public class ScrapperClientImpl implements ScrapperClient {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, r -> r.bodyToMono(ApiErrorResponse.class))
+                .onStatus(HttpStatusCode::is5xxServerError, r -> r.bodyToMono(ApiErrorResponse.class))
                 .toEntity(LinkResponse.class)
                 .block();
 
