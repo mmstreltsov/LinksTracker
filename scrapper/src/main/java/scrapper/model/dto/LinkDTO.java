@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import scrapper.model.entity.Chat;
+import scrapper.domain.entity.Chat;
 
 import java.net.URI;
 import java.time.OffsetDateTime;

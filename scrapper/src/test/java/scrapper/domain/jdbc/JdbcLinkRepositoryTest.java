@@ -1,22 +1,5 @@
 package scrapper.domain.jdbc;
 
-import dataBaseTests.IntegrationEnvironment;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.DataClassRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.Transactional;
-import scrapper.model.entity.Link;
-
-import java.net.URI;
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 //@SpringBootTest
 class JdbcLinkRepositoryTest {} /*extends IntegrationEnvironment {
     @Autowired

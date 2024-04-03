@@ -1,17 +1,16 @@
 package scrapper.domain;
 
-import scrapper.model.entity.Chat;
+import scrapper.domain.entity.Chat;
 
 import java.util.List;
 
 public interface ChatRepository {
-    Chat addChat(Chat chat);
+    Chat add(Chat chat);
+    Chat update(Chat chat);
 
-    void removeChatById(Long id);
+    Chat findById(Long id);
+    Chat findByChatId(Long chatId);
+    void remove(Chat chat);
 
-    void removeChatByChatId(Long chatId);
-
-    List<Chat> findAll();
-
-    List<Chat> findAllByCurrentLinkUrl(String url);
+    List<Chat> findAllChatWhatLinkUrlIs(String url);
 }

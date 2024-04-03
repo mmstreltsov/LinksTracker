@@ -4,10 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 import scrapper.domain.LinkRepository;
-import scrapper.model.entity.Link;
-
-import java.time.OffsetDateTime;
-import java.util.List;
+import scrapper.domain.entity.Link;
 
 @Repository
 public class JpaLinkRepository implements LinkRepository {
@@ -15,47 +12,30 @@ public class JpaLinkRepository implements LinkRepository {
     private EntityManager entityManager;
 
     @Override
-    public Link addLink(Link link) {
-        return null;
+    public Link add(Link link) {
+        entityManager.persist(link);
+        entityManager.flush();
+        entityManager.detach(link);
+        return link;
     }
 
     @Override
-    public void removeLink(Link link) {
-
-    }
-
-    @Override
-    public List<Link> findAll() {
-        return entityManager.createQuery("SELECT l FROM Link l", Link.class).getResultList();
+    public Link update(Link link) {
+        entityManager.merge(link);
+        return link;
     }
 
     @Override
     public Link findById(Long id) {
-        return null;
+        return entityManager.getReference(Link.class, id);
     }
 
     @Override
-    public List<Link> findByChatId(Long chatId) {
-        return null;
-    }
-
-    @Override
-    public List<Link> findAllByUrl(String url) {
-        return null;
-    }
-
-    @Override
-    public void updateCheckField(Link link) {
-
-    }
-
-    @Override
-    public void updateUpdateField(Link link) {
-
-    }
-
-    @Override
-    public List<Link> findLinksCheckedFieldLessThenGivenAndUniqueUrl(OffsetDateTime time) {
-        return null;
+    public void remove(Link link) {
+        if (!entityManager.contains(link)) {
+            link = findById(link.getId());
+        }
+        entityManager.remove(link);
+        entityManager.flush();
     }
 }

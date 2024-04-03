@@ -2,8 +2,8 @@ package scrapper.model.dto;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import scrapper.model.entity.Chat;
-import scrapper.model.entity.Link;
+import scrapper.domain.entity.Chat;
+import scrapper.domain.entity.Link;
 
 import java.net.URI;
 import java.time.OffsetDateTime;

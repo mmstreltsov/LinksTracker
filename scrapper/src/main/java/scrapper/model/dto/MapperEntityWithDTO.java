@@ -1,8 +1,8 @@
 package scrapper.model.dto;
 
 import org.springframework.stereotype.Component;
-import scrapper.model.entity.Chat;
-import scrapper.model.entity.Link;
+import scrapper.domain.entity.Chat;
+import scrapper.domain.entity.Link;
 
 import java.net.URI;
 import java.util.List;

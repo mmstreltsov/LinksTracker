@@ -7,7 +7,7 @@ import scrapper.model.ChatStorageService;
 import scrapper.model.dto.ChatDTO;
 import scrapper.model.dto.LinkDTO;
 import scrapper.model.dto.MapperEntityWithDTO;
-import scrapper.model.entity.Chat;
+import scrapper.domain.entity.Chat;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ public class ChatStorageServiceImpl implements ChatStorageService {
     private final ChatRepository chatRepository;
     private final MapperEntityWithDTO mapper;
 
-    public ChatStorageServiceImpl(@Qualifier("jdbcChatRepository") ChatRepository chatRepository,
+    public ChatStorageServiceImpl(ChatRepository chatRepository,
                                   MapperEntityWithDTO mapper) {
         this.chatRepository = chatRepository;
         this.mapper = mapper;
@@ -25,13 +25,15 @@ public class ChatStorageServiceImpl implements ChatStorageService {
 
     @Override
     public ChatDTO addUser(ChatDTO chatDTO) {
-        Chat chat = chatRepository.addChat(mapper.getChat(chatDTO));
-        return mapper.getChatDto(chat);
+//        Chat chat = chatRepository.addChat(mapper.getChat(chatDTO));
+//        return mapper.getChatDto(chat);
+        return null;
     }
 
     @Override
     public List<ChatDTO> findAllChatsByCurrentUrl(String url) {
-        return mapper.getChatDtoList(chatRepository.findAllByCurrentLinkUrl(url));
+//        return mapper.getChatDtoList(chatRepository.findAllByCurrentLinkUrl(url));
+        return null;
     }
 
     @Override
@@ -43,7 +45,7 @@ public class ChatStorageServiceImpl implements ChatStorageService {
 
     @Override
     public void removeEveryRowForUser(Long chatId) {
-        chatRepository.removeChatByChatId(chatId);
+//        chatRepository.removeChatByChatId(chatId);
     }
 
     @Override

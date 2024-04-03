@@ -1,20 +1,11 @@
 package scrapper.model.impl;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import scrapper.domain.LinkRepository;
-import scrapper.model.dto.LinkDTO;
 import scrapper.model.dto.MapperEntityWithDTO;
-import scrapper.model.entity.Link;
-
-import java.net.URI;
-import java.time.OffsetDateTime;
-import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class LinkStorageServiceImplTest {

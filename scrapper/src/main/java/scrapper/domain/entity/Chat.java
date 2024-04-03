@@ -1,11 +1,13 @@
-package scrapper.model.entity;
+package scrapper.domain.entity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,7 +30,8 @@ import java.util.List;
 @EqualsAndHashCode(of = {"id"})
 public class Chat {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "chat_generator")
+    @SequenceGenerator(name = "chat_generator", sequenceName = "chat_sequence", allocationSize = 1)
     private Long id;
 
     @Column(name = "chat_id")
