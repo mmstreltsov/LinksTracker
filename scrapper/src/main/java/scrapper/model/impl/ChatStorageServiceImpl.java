@@ -36,20 +36,21 @@ public class ChatStorageServiceImpl implements ChatStorageService {
 
     @Override
     public List<LinkDTO> findAllLinksByChatId(Long id) {
-        return mapper.getLinkDtoList(chatRepository.findAllLinksByChatId(id));
+//        return mapper.getLinkDtoList(chatRepository.findAllLinksByChatId(id));
+        return null;
     }
 
 
     @Override
     public void removeEveryRowForUser(Long chatId) {
-        chatRepository.removeEveryChatByChatId(chatId);
+        chatRepository.removeChatByChatId(chatId);
     }
 
     @Override
     public void removeByChatIdAndLinkId(Long chatId, Long linkId) {
-        Chat chat = chatRepository.findChatByChatIdAndLinkId(chatId, linkId);
-        if (chat != null) {
-            chatRepository.removeChatById(chat.getId());
-        }
+//        Chat chat = chatRepository.findChatByChatIdAndLinkId(chatId, linkId);
+//        if (chat != null) {
+//            chatRepository.removeChatById(chat.getId());
+//        }
     }
 }

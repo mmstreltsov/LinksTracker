@@ -75,7 +75,6 @@ public class ScrapperController {
 
         ChatDTO chatDTO = ChatDTO.builder()
                 .chatId(chatId)
-                .linkId(linkDTO.getId())
                 .build();
 
         chatStorageService.addUser(chatDTO);

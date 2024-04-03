@@ -26,7 +26,7 @@ public class JdbcLinkRepository implements LinkRepository {
     @Override
     @Transactional
     public Link addLink(Link link) {
-        final String insertIntoSql = "INSERT INTO links (url, updated_at, checked_at) VALUES (?, ?, ?)";
+        final String insertIntoSql = "INSERT INTO links (url, chat_id, updated_at, checked_at) VALUES (?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         if (link.getUpdatedAt() == null) {
@@ -37,8 +37,9 @@ public class JdbcLinkRepository implements LinkRepository {
                 connection -> {
                     PreparedStatement preparedStatement = connection.prepareStatement(insertIntoSql, new String[]{"id"});
                     preparedStatement.setString(1, link.getUrl().toString());
-                    preparedStatement.setObject(2, link.getUpdatedAt());
-                    preparedStatement.setObject(3, link.getCheckedAt());
+                    preparedStatement.setObject(2, link.getChat().getChatId());
+                    preparedStatement.setObject(3, link.getUpdatedAt());
+                    preparedStatement.setObject(4, link.getCheckedAt());
                     return preparedStatement;
                 }, keyHolder
         );
@@ -47,6 +48,7 @@ public class JdbcLinkRepository implements LinkRepository {
         return Link.builder()
                 .id(id)
                 .url(link.getUrl())
+                .chat(link.getChat())
                 .checkedAt(link.getCheckedAt())
                 .updatedAt(link.getUpdatedAt())
                 .build();
@@ -73,6 +75,14 @@ public class JdbcLinkRepository implements LinkRepository {
                 "SELECT * FROM links WHERE id=(?)",
                 rowMapper,
                 id
+        );
+    }
+    @Override
+    public List<Link> findByChatId(Long chatId) {
+        return jdbcTemplate.query(
+                "SELECT * FROM links WHERE chat_id=(?)",
+                rowMapper,
+                chatId
         );
     }
 

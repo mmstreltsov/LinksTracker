@@ -14,6 +14,8 @@ public interface LinkRepository {
 
     Link findById(Long id);
 
+    List<Link> findByChatId(Long chatId);
+
     List<Link> findAllByUrl(String url);
 
     void updateCheckField(Link link);

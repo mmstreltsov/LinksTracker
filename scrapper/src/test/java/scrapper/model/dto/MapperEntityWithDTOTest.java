@@ -15,33 +15,33 @@ class MapperEntityWithDTOTest {
 
     @Test
     void getChat_testCorrectLogic() {
-        ChatDTO chatDTO = new ChatDTO(1L, 2L, 3L);
+        ChatDTO chatDTO = new ChatDTO(1L, 2L, null);
 
         Chat chat = mapper.getChat(chatDTO);
 
         Assertions.assertAll(
                 () -> Assertions.assertEquals(chat.getId(), chatDTO.getId()),
                 () -> Assertions.assertEquals(chat.getChatId(), chatDTO.getChatId()),
-                () -> Assertions.assertEquals(chat.getLinkId(), chatDTO.getLinkId())
+                () -> Assertions.assertEquals(mapper.getLinkDtoList(chat.getLinks()), chatDTO.getLinks())
         );
     }
 
     @Test
     void getChatDTO_testCorrectLogic() {
-        Chat chat = new Chat(1L, 2L, 3L);
+        Chat chat = new Chat(1L, 2L, null);
 
         ChatDTO chatDTO = mapper.getChatDto(chat);
 
         Assertions.assertAll(
                 () -> Assertions.assertEquals(chatDTO.getId(), chat.getId()),
                 () -> Assertions.assertEquals(chatDTO.getChatId(), chat.getChatId()),
-                () -> Assertions.assertEquals(chatDTO.getLinkId(), chat.getLinkId())
+                () -> Assertions.assertEquals(mapper.getLinkList(chatDTO.getLinks()), chat.getLinks())
         );
     }
 
     @Test
     void getChatDTOList_testCorrectLogic() {
-        Chat chat = new Chat(1L, 2L, 3L);
+        Chat chat = new Chat(1L, 2L, null);
         List<Chat> chatList = List.of(chat, chat, chat);
 
         List<ChatDTO> chatDTOList = mapper.getChatDtoList(chatList);
@@ -54,14 +54,14 @@ class MapperEntityWithDTOTest {
             Assertions.assertAll(
                     () -> Assertions.assertEquals(c.getId(), cDTO.getId()),
                     () -> Assertions.assertEquals(c.getChatId(), cDTO.getChatId()),
-                    () -> Assertions.assertEquals(c.getLinkId(), cDTO.getLinkId())
+                    () -> Assertions.assertEquals(mapper.getLinkDtoList(c.getLinks()), cDTO.getLinks())
             );
         }
     }
 
     @Test
     void getLink_testCorrectLogic() {
-        LinkDTO linkDTO = new LinkDTO(1L, URI.create("1L"), OffsetDateTime.MAX, OffsetDateTime.MIN);
+        LinkDTO linkDTO = new LinkDTO(1L, URI.create("1L"), OffsetDateTime.MAX, OffsetDateTime.MIN, null);
 
         Link link = mapper.getLink(linkDTO);
 
@@ -75,7 +75,7 @@ class MapperEntityWithDTOTest {
 
     @Test
     void getLinkDTO_testCorrectLogic() {
-        Link link = new Link(1L, URI.create("1L"), OffsetDateTime.MAX, OffsetDateTime.MIN);
+        Link link = new Link(1L, "1L", OffsetDateTime.MAX, OffsetDateTime.MIN, null);
 
         LinkDTO linkDTO = mapper.getLinkDto(link);
 
@@ -89,7 +89,7 @@ class MapperEntityWithDTOTest {
 
     @Test
     void getLinkDTOList_testCorrectLogic() {
-        Link link = new Link(1L, URI.create("1L"), OffsetDateTime.MAX, OffsetDateTime.MIN);
+        Link link = new Link(1L, "1L", OffsetDateTime.MAX, OffsetDateTime.MIN, null);
         List<Link> linkList = List.of(link, link, link);
 
         List<LinkDTO> linkDTOList = mapper.getLinkDtoList(linkList);

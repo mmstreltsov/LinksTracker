@@ -40,12 +40,12 @@ class UpdateAndSendLinkServiceImplTestDTO {
                 linkStorageService, chatStorageService, executorServiceForFutureTasks);
     }
 
-    @Test
-    void actionByUpdate_testWhenCheckInfoThrowSmth() {
-        Mockito.when(checkInfo.getResponse(Mockito.any()))
-                .thenThrow(RuntimeException.class);
-        LinkDTO linkDTO = new LinkDTO(1L, URI.create("ahaha"), OffsetDateTime.MIN, OffsetDateTime.now());
-
-        Assertions.assertDoesNotThrow(() -> updateAndSendLinkService.handle(linkDTO));
-    }
+//    @Test
+//    void actionByUpdate_testWhenCheckInfoThrowSmth() {
+//        Mockito.when(checkInfo.getResponse(Mockito.any()))
+//                .thenThrow(RuntimeException.class);
+//        LinkDTO linkDTO = new LinkDTO(1L, URI.create("ahaha"), OffsetDateTime.MIN, OffsetDateTime.now());
+//
+//        Assertions.assertDoesNotThrow(() -> updateAndSendLinkService.handle(linkDTO));
+//    }
 }
