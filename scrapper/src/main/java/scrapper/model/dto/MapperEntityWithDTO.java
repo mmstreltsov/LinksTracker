@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component;
 import scrapper.domain.entity.Chat;
 import scrapper.domain.entity.Link;
 
-import java.net.URI;
 import java.util.List;
 
 @Component
@@ -12,9 +11,7 @@ public class MapperEntityWithDTO {
 
     public ChatDTO getChatDto(Chat chat) {
         return ChatDTO.builder()
-                .id(chat.getId())
                 .chatId(chat.getChatId())
-                .links(this.getLinkDtoList(chat.getLinks()))
                 .build();
     }
 
@@ -27,11 +24,9 @@ public class MapperEntityWithDTO {
 
     public LinkDTO getLinkDto(Link link) {
         return LinkDTO.builder()
-                .id(link.getId())
-                .chat(link.getChat())
-                .url(URI.create(link.getUrl()))
-                .checkedAt(link.getCheckedAt())
+                .url(link.getUrl())
                 .updatedAt(link.getUpdatedAt())
+                .chat(this.getChatDto(link.getChat()))
                 .build();
     }
 
@@ -51,19 +46,15 @@ public class MapperEntityWithDTO {
 
     public Chat getChat(ChatDTO chat) {
         return Chat.builder()
-                .id(chat.getId())
                 .chatId(chat.getChatId())
-                .links(this.getLinkList(chat.getLinks()))
                 .build();
     }
 
     public Link getLink(LinkDTO link) {
         return Link.builder()
-                .id(link.getId())
-                .chat(link.getChat())
-                .url(link.getUrl().toString())
-                .checkedAt(link.getCheckedAt())
+                .url(link.getUrl())
                 .updatedAt(link.getUpdatedAt())
+                .chat(this.getChat(link.getChat()))
                 .build();
     }
 }

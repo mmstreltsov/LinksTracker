@@ -51,7 +51,8 @@ public class UpdateAndSendLinkServiceImpl implements UpdateAndSendLinkService {
             return;
         }
 
-        List<ChatDTO> chatDTOS = chatStorageService.findAllChatsByCurrentUrl(linkDTO.getUrl().toString());
+//        List<ChatDTO> chatDTOS = chatStorageService.findAllChatsByCurrentUrl(linkDTO.getUrl().toString());
+        List<ChatDTO> chatDTOS = null;
         log.info("Get chats: " + chatDTOS);
         executorServiceForFutureTasks.submit(() -> botClient.updateLink(chatDTOS, linkDTO));
         executorServiceForFutureTasks.submit(() -> linkStorageService.setUpdateFieldToNow(linkDTO));

@@ -14,7 +14,5 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class ChatDTO {
-    private Long id;
     private Long chatId;
-    private List<LinkDTO> links;
 }

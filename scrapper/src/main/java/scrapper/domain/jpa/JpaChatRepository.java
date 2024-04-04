@@ -2,6 +2,9 @@ package scrapper.domain.jpa;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import scrapper.domain.ChatRepository;
 import scrapper.domain.entity.Chat;
@@ -51,9 +54,17 @@ public class JpaChatRepository implements ChatRepository {
     }
 
     @Override
-    public List<Chat> findAllChatWhatLinkUrlIs(String url) {
-        return entityManager.createQuery("SELECT c FROM Chat c JOIN Link WHERE Link.url = ?1", Chat.class)
+    public Page<Chat> findAllChatWhatLinkUrlIs(String url, Pageable pageable) {
+        List<Chat> list = entityManager.createQuery("SELECT c FROM Chat c JOIN Link l WHERE l.url = ?1 and l.chat = c", Chat.class)
                 .setParameter(1, url)
+                .setFirstResult(pageable.getPageNumber() * pageable.getPageSize())
+                .setMaxResults(pageable.getPageSize())
                 .getResultList();
+
+        Long size = entityManager.createQuery("SELECT count(c) FROM Chat c JOIN Link l WHERE l.url = ?1 and l.chat = c", Long.class)
+                .setParameter(1, url)
+                .getSingleResult();
+
+        return new PageImpl<>(list, pageable, size);
     }
 }

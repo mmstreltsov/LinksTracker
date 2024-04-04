@@ -6,15 +6,25 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import scrapper.domain.entity.Chat;
+import scrapper.domain.entity.Link;
+
+import java.time.OffsetDateTime;
+import java.util.List;
 
 @SpringBootTest
 public class JpaChatRepositoryTest extends IntegrationEnvironment {
 
     @Autowired
     private JpaChatRepository jpaChatRepository;
+
+    @Autowired
+    private JpaLinkRepository jpaLinkRepository;
 
     @Test
     @Transactional
@@ -83,6 +93,28 @@ public class JpaChatRepositoryTest extends IntegrationEnvironment {
         );
     }
 
+    @Test
+    @Transactional
+    @Rollback
+    void findById_testLinksAreCorrect() {
+        Chat chat = new Chat();
+        chat.setChatId(123L);
+        Chat excepted = jpaChatRepository.add(chat);
+
+        int size = 50;
+        for (int i = 0; i < size; ++i) {
+            Link link = new Link();
+            link.setChat(chat);
+            link.setUrl("ahahahhahaaaa");
+
+            jpaLinkRepository.add(link);
+        }
+
+        Chat actual = jpaChatRepository.findById(excepted.getId());
+
+        Assertions.assertNotNull(actual.getLinks());
+        Assertions.assertEquals(size, actual.getLinks().size());
+    }
 
     @Test
     @Transactional
@@ -134,6 +166,63 @@ public class JpaChatRepositoryTest extends IntegrationEnvironment {
 
         Assertions.assertAll(
                 () -> Assertions.assertThrows(EntityNotFoundException.class, () -> jpaChatRepository.findById(excepted.getId()).setId(1L))
+        );
+    }
+
+
+    @Test
+    @Transactional
+    @Rollback
+    void findAllChatWhatLinkUrlIs_testCorrectLogic() {
+        int size = 5;
+        String url = "findAllChatWhatLinkUrlIs";
+
+        for (int i = 0; i < size; ++i) {
+            Chat chat = new Chat();
+            chat.setChatId(111L + i);
+            Chat added = jpaChatRepository.add(chat);
+
+            Link link = new Link();
+            link.setChat(added);
+            link.setUrl(url);
+            link.setUpdatedAt(OffsetDateTime.now());
+            jpaLinkRepository.add(link);
+        }
+
+        Pageable pageable = PageRequest.of(0, size);
+
+        List<Chat> chats = jpaChatRepository.findAllChatWhatLinkUrlIs(url, pageable).getContent();
+        Assertions.assertEquals(size, chats.size());
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void findAllChatWhatLinkUrlIs_testPagination() {
+        int size = 54;
+        String url = "findAllChatWhatLinkUrlIs";
+
+        for (int i = 0; i < size; ++i) {
+            Chat chat = new Chat();
+            chat.setChatId(111L + i);
+            Chat added = jpaChatRepository.add(chat);
+
+            Link link = new Link();
+            link.setChat(added);
+            link.setUrl(url);
+            link.setUpdatedAt(OffsetDateTime.now());
+            jpaLinkRepository.add(link);
+        }
+
+        int page = 3;
+        int pageSize = 10;
+        Pageable pageable = PageRequest.of(page, pageSize);
+
+        Page<Chat> chats = jpaChatRepository.findAllChatWhatLinkUrlIs(url, pageable);
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(pageSize, chats.getContent().size()),
+                () -> Assertions.assertEquals(page, chats.getNumber()),
+                () -> Assertions.assertEquals(Math.ceil((double) size / pageSize), chats.getTotalPages())
         );
     }
 }

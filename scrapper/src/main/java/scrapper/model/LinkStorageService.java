@@ -1,16 +1,17 @@
 package scrapper.model;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import scrapper.model.dto.LinkDTO;
 
-import java.time.OffsetDateTime;
-import java.util.List;
+import java.time.temporal.TemporalUnit;
 
 public interface LinkStorageService {
-    LinkDTO addLink(LinkDTO linkDTO);
+    void addLink(LinkDTO linkDTO);
 
     void removeLink(LinkDTO linkDTO);
 
     void setCheckFieldToNow(LinkDTO linkDTO);
     void setUpdateFieldToNow(LinkDTO linkDTO);
-    List<LinkDTO> findLinksCheckedFieldLessThenGivenAndUniqueUrl(OffsetDateTime time);
+    Page<LinkDTO> findUniqueUrlWhatNotCheckedForALongTime(int amount, TemporalUnit temporalUnit, Pageable pageable);
 }

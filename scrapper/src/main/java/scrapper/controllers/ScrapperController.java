@@ -38,7 +38,7 @@ public class ScrapperController {
 
     @DeleteMapping("/tg-chat/{id}")
     public ResponseEntity<Object> deleteChat(@PathVariable("id") Long id) {
-        chatStorageService.removeEveryRowForUser(id);
+//        chatStorageService.removeChat(id);
         return ResponseEntity.status(HttpStatus.OK).body("");
     }
 
@@ -46,9 +46,9 @@ public class ScrapperController {
     public ResponseEntity<Object> getLinks(@RequestHeader("Tg-Chat-Id") Long chatId) {
         List<LinkDTO> chats = chatStorageService.findAllLinksByChatId(chatId);
 
-        List<LinkResponse> links = chats.stream()
-                .map(it -> new LinkResponse(it.getId(), it.getUrl().toString()))
-                .toList();
+        List<LinkResponse> links = null;//        chats.stream()
+//                .map(it -> new LinkResponse(it.getId(), it.getUrl().toString()))
+//                .toList();
 
         if (links.isEmpty()) {
             throw new ClientException(HttpStatus.NO_CONTENT.value(), "No tracked links");
@@ -69,15 +69,15 @@ public class ScrapperController {
         }
 
         LinkDTO linkDTO = LinkDTO.builder()
-                .url(URI.create(request.link))
+//                .url(URI.create(request.link))
                 .build();
-        linkDTO = linkStorageService.addLink(linkDTO);
+//        linkDTO = linkStorageService.addLink(linkDTO);
 
         ChatDTO chatDTO = ChatDTO.builder()
                 .chatId(chatId)
                 .build();
 
-        chatStorageService.addUser(chatDTO);
+        chatStorageService.addChat(chatDTO);
 
         LinkResponse linkResponse = new LinkResponse(chatId, linkDTO.getUrl().toString());
         return ResponseEntity.status(HttpStatus.OK).body(linkResponse);
@@ -93,7 +93,7 @@ public class ScrapperController {
                 continue;
             }
             tracked = LinkDTO.builder()
-                    .id(it.getId())
+//                    .id(it.getId())
                     .url(it.getUrl())
                     .build();
         }
@@ -103,7 +103,7 @@ public class ScrapperController {
             throw new ClientException(HttpStatus.BAD_REQUEST.value(), "Link is not found");
         }
 
-        chatStorageService.removeByChatIdAndLinkId(chatId, tracked.getId());
+//        chatStorageService.removeByChatIdAndLinkId(chatId, tracked.getId());
         linkStorageService.removeLink(tracked);
 
         LinkResponse linkResponse = new LinkResponse(chatId, tracked.getUrl().toString());
