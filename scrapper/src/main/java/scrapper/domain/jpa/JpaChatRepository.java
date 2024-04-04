@@ -2,6 +2,7 @@ package scrapper.domain.jpa;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +13,7 @@ import scrapper.domain.entity.Chat;
 import java.util.List;
 
 @Repository
+@Transactional
 public class JpaChatRepository implements ChatRepository {
 
     @PersistenceContext
@@ -21,7 +23,6 @@ public class JpaChatRepository implements ChatRepository {
     public Chat add(Chat chat) {
         entityManager.persist(chat);
         entityManager.flush();
-        entityManager.detach(chat);
         return chat;
     }
 

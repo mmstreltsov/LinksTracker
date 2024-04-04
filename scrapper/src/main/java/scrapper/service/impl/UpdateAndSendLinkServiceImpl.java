@@ -2,6 +2,9 @@ package scrapper.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import scrapper.client.botClient.BotClient;
 import scrapper.model.ChatStorageService;
@@ -12,7 +15,6 @@ import scrapper.service.GetResponseFromAnyHost;
 import scrapper.service.UpdateAndSendLinkService;
 import scrapper.service.dto.LastUpdatedDTO;
 
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 @Slf4j
@@ -24,8 +26,10 @@ public class UpdateAndSendLinkServiceImpl implements UpdateAndSendLinkService {
     private final ChatStorageService chatStorageService;
     private final ExecutorService executorServiceForFutureTasks;
 
-    public UpdateAndSendLinkServiceImpl(GetResponseFromAnyHost checkInfo, BotClient botClient,
-                                        LinkStorageService linkStorageService, ChatStorageService chatStorageService,
+    public UpdateAndSendLinkServiceImpl(GetResponseFromAnyHost checkInfo,
+                                        BotClient botClient,
+                                        LinkStorageService linkStorageService,
+                                        ChatStorageService chatStorageService,
                                         @Qualifier("executorServiceForFutureTasks") ExecutorService executorServiceForFutureTasks) {
         this.checkInfo = checkInfo;
         this.botClient = botClient;
@@ -36,26 +40,35 @@ public class UpdateAndSendLinkServiceImpl implements UpdateAndSendLinkService {
 
 
     public void handle(LinkDTO linkDTO) {
-        log.info("Get link: " + linkDTO.getUrl().toString());
+        log.info("Get link: " + linkDTO.getUrl());
         executorServiceForFutureTasks.submit(() -> linkStorageService.setCheckFieldToNow(linkDTO));
 
         LastUpdatedDTO response;
         try {
-            response = checkInfo.getResponse(linkDTO.getUrl().toString());
+            response = checkInfo.getResponse(linkDTO.getUrl());
         } catch (Throwable ignored) {
             return;
         }
-        log.info("Link parsed: " + linkDTO.getUrl().toString());
+        log.info("Link parsed: " + linkDTO.getUrl());
 
         if (!isLinkUpdated(linkDTO, response)) {
             return;
         }
 
-//        List<ChatDTO> chatDTOS = chatStorageService.findAllChatsByCurrentUrl(linkDTO.getUrl().toString());
-        List<ChatDTO> chatDTOS = null;
-        log.info("Get chats: " + chatDTOS);
-        executorServiceForFutureTasks.submit(() -> botClient.updateLink(chatDTOS, linkDTO));
-        executorServiceForFutureTasks.submit(() -> linkStorageService.setUpdateFieldToNow(linkDTO));
+        int size = 501;
+        int page = 0, totalPage;
+        do {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<ChatDTO> chats = chatStorageService.findAllChatsByCurrentUrl(linkDTO.getUrl(), pageable);
+            totalPage = chats.getTotalPages();
+
+            log.info("Get chats: " + chats.getContent());
+
+            executorServiceForFutureTasks.submit(() -> botClient.updateLink(chats.getContent(), linkDTO));
+            executorServiceForFutureTasks.submit(() -> linkStorageService.setUpdateFieldToValue(linkDTO, response.getUpdatedAt()));
+
+            page++;
+        } while (page < totalPage);
     }
 
     private boolean isLinkUpdated(LinkDTO linkDTO, LastUpdatedDTO lastUpdatedDTO) {

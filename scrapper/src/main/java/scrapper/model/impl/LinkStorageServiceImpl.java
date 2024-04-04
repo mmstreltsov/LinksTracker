@@ -1,5 +1,7 @@
 package scrapper.model.impl;
 
+import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,7 @@ import java.time.OffsetDateTime;
 import java.time.temporal.TemporalUnit;
 
 @Service
+@Slf4j
 public class LinkStorageServiceImpl implements LinkStorageService {
 
     private final LinkRepository linkRepository;
@@ -33,17 +36,26 @@ public class LinkStorageServiceImpl implements LinkStorageService {
 
     @Override
     public void addLink(LinkDTO linkDTO) {
-        validateLink(linkDTO);
-        linkRepository.add(mapper.getLink(linkDTO));
+        Link link = validateLink(linkDTO);
+        linkRepository.add(link);
+        log.info("Added link: {}", linkDTO);
     }
 
-    private void validateLink(LinkDTO linkDTO) {
-        Chat chat = chatRepository.findById(linkDTO.getChat().getChatId());
+    private Link validateLink(LinkDTO linkDTO) {
+        Chat chat = null;
+        try {
+            chat = chatRepository.findByChatId(linkDTO.getChat().getChatId());
+        } catch (EntityNotFoundException ignored) {
+        }
+
         if (chat == null) {
             throw new ClientException(HttpStatus.BAD_REQUEST.value(), "Not registered yet");
         }
-        if (chat.getLinks().size() >= 1024) {
+        if (chat.getLinks() != null && chat.getLinks().size() >= 1024) {
             throw new ClientException(HttpStatus.BAD_REQUEST.value(), "Too many links. Available links per 1024");
+        }
+        if (chat.getLinks() != null && chat.getLinks().stream().anyMatch(it -> it.getUrl().equals(linkDTO.getUrl()))) {
+            throw new ClientException(HttpStatus.BAD_REQUEST.value(), "You are already tracked link with this url");
         }
         if (linkDTO.getUrl().isEmpty()) {
             throw new ClientException(HttpStatus.BAD_REQUEST.value(), "Empty link URL");
@@ -51,11 +63,18 @@ public class LinkStorageServiceImpl implements LinkStorageService {
         if (linkDTO.getUrl().length() > 512) {
             throw new ClientException(HttpStatus.BAD_REQUEST.value(), "URL too long. Max 255 characters");
         }
+
+        Link link = mapper.getLink(linkDTO);
+        link.setChat(chat);
+        return link;
     }
 
     @Override
     public void removeLink(LinkDTO linkDTO) {
         Link link = linkRepository.findByUlrAndChatId(linkDTO.getUrl(), linkDTO.getChat().getChatId());
+        if (link == null) {
+            throw new ClientException(HttpStatus.BAD_REQUEST.value(), "Links is not tracked");
+        }
         linkRepository.remove(link);
     }
 
@@ -67,15 +86,19 @@ public class LinkStorageServiceImpl implements LinkStorageService {
     }
 
     @Override
-    public void setUpdateFieldToNow(LinkDTO linkDTO) {
+    public void setUpdateFieldToValue(LinkDTO linkDTO, OffsetDateTime time) {
         Link link = linkRepository.findByUlrAndChatId(linkDTO.getUrl(), linkDTO.getChat().getChatId());
-        link.setUpdatedAt(OffsetDateTime.now());
+        link.setUpdatedAt(time);
         linkRepository.update(link);
     }
 
     @Override
     public Page<LinkDTO> findUniqueUrlWhatNotCheckedForALongTime(int amount, TemporalUnit temporalUnit, Pageable pageable) {
         Page<Link> page = linkRepository.findUniqueUrlWhatNotCheckedForALongTime(amount, temporalUnit, pageable);
+
+        if (page == null) {
+            return null;
+        }
         return page.map(mapper::getLinkDto);
     }
 }

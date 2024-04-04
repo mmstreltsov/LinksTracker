@@ -147,7 +147,7 @@ class LinkStorageServiceImplTest {
     }
 
     @Test
-    void setUpdateFieldToNow_testCorrectLogic() {
+    void setUpdateFieldToValue_testCorrectLogic() {
         ChatDTO chatDTO = new ChatDTO(1L);
         LinkDTO linkDTO = new LinkDTO("ahaha", OffsetDateTime.MIN, chatDTO);
 
@@ -155,10 +155,11 @@ class LinkStorageServiceImplTest {
         Mockito.when(linkRepository.findByUlrAndChatId(Mockito.anyString(), Mockito.anyLong()))
                 .thenReturn(link);
 
-        linkStorageService.setUpdateFieldToNow(linkDTO);
+        OffsetDateTime time = OffsetDateTime.now().minusMinutes(55);
+        linkStorageService.setUpdateFieldToValue(linkDTO, time);
 
         Mockito.verify(link, Mockito.times(1))
-                .setUpdatedAt(Mockito.any(OffsetDateTime.class));
+                .setUpdatedAt(ArgumentMatchers.eq(time));
         Mockito.verify(linkRepository, Mockito.times(1))
                 .update(ArgumentMatchers.eq(link));
     }

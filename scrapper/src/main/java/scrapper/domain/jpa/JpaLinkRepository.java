@@ -2,20 +2,20 @@ package scrapper.domain.jpa;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import scrapper.domain.LinkRepository;
-import scrapper.domain.entity.Chat;
 import scrapper.domain.entity.Link;
 
 import java.time.OffsetDateTime;
 import java.time.temporal.TemporalUnit;
-import java.util.ArrayList;
 import java.util.List;
 
 @Repository
+@Transactional
 public class JpaLinkRepository implements LinkRepository {
     @PersistenceContext
     private EntityManager entityManager;
@@ -28,7 +28,6 @@ public class JpaLinkRepository implements LinkRepository {
 
         entityManager.persist(link);
         entityManager.flush();
-        entityManager.detach(link);
         return link;
     }
 
@@ -76,9 +75,9 @@ public class JpaLinkRepository implements LinkRepository {
         OffsetDateTime time = OffsetDateTime.now().minus(amount, temporalUnit);
 
         List<Link> links = entityManager.createQuery(
-                "SELECT l FROM Link l where l.id in (" +
-                        "SELECT min(l.id) FROM Link l WHERE l.checkedAt is null or l.checkedAt < ?1 group by l.url" +
-                        ")", Link.class)
+                        "SELECT l FROM Link l where l.id in (" +
+                                "SELECT min(l.id) FROM Link l WHERE l.checkedAt is null or l.checkedAt < ?1 group by l.url" +
+                                ")", Link.class)
                 .setParameter(1, time)
                 .setFirstResult(pageable.getPageSize() * pageable.getPageNumber())
                 .setMaxResults(pageable.getPageSize())
