@@ -59,8 +59,6 @@ class StartCommandTest {
                 .build();
         Mockito.doThrow(apiErrorResponse).when(scrapperClient).registerAccount(Mockito.any());
 
-        String actual = startCommand.handle(update);
-
-        Assertions.assertTrue(actual.contains("Unsuccessful"), "Incorrect message: " + actual);
+        Assertions.assertThrows(ApiErrorResponse.class, () -> startCommand.handle(update));
     }
 }

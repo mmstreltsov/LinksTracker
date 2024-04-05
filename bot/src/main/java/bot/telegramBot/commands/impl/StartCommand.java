@@ -1,7 +1,6 @@
 package bot.telegramBot.commands.impl;
 
 import bot.client.ScrapperClient;
-import bot.client.dto.ApiErrorResponse;
 import bot.telegramBot.commands.Command;
 import bot.telegramBot.commands.CommandInfo;
 import bot.telegramBot.utils.BotResponse;
@@ -29,16 +28,11 @@ public class StartCommand implements Command {
 
     @Override
     public String handle(Update update) {
-        try {
-            Long id = update.message().chat().id();
+        Long id = update.message().chat().id();
 
-            scrapperClient.registerAccount(id);
+        scrapperClient.registerAccount(id);
 
-            return BotResponse.USER_ADDED_AND_U_R_WELCOME.msg;
-        } catch (ApiErrorResponse ex) {
-            log.debug("failed to exec " + command() + ": " + ex.description);
-            return ex.description;
-        }
+        return BotResponse.USER_ADDED_AND_U_R_WELCOME.msg;
     }
 
 }

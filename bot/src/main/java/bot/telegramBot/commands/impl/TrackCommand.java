@@ -1,7 +1,6 @@
 package bot.telegramBot.commands.impl;
 
 import bot.client.ScrapperClient;
-import bot.client.dto.ApiErrorResponse;
 import bot.client.dto.LinkResponse;
 import bot.telegramBot.commands.Command;
 import bot.telegramBot.commands.CommandInfo;
@@ -33,16 +32,11 @@ public class TrackCommand implements Command {
 
     @Override
     public String handle(Update update) {
-        try {
-            Long id = update.message().chat().id();
-            URI link = UriHandler.getLinkFromMessage(update);
+        Long id = update.message().chat().id();
+        URI link = UriHandler.getLinkFromMessage(update);
 
-            LinkResponse linkResponse = scrapperClient.addLink(id, link);
+        LinkResponse linkResponse = scrapperClient.addLink(id, link);
 
-            return BotResponse.LINK_SUCCESSFUL_TRACKED.msg;
-        } catch (ApiErrorResponse ex) {
-            log.debug("failed to exec " + command() + ": " + ex.description);
-            return ex.description;
-        }
+        return BotResponse.LINK_SUCCESSFUL_TRACKED.msg;
     }
 }

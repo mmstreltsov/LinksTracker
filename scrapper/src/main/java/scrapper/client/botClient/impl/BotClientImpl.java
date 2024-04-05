@@ -8,8 +8,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import scrapper.client.botClient.BotClient;
 import scrapper.client.botClient.dto.ApiErrorResponse;
 import scrapper.client.botClient.dto.LinkUpdateRequest;
-import scrapper.model.entity.Chat;
-import scrapper.model.entity.Link;
+import scrapper.model.dto.ChatDTO;
+import scrapper.model.dto.LinkDTO;
 
 import java.util.List;
 
@@ -25,11 +25,11 @@ public class BotClientImpl implements BotClient {
     }
 
     @Override
-    public void updateLink(List<Chat> chat, Link link) {
+    public void updateLink(List<ChatDTO> chatDTO, LinkDTO linkDTO) {
         log.info("Trying to send request to Bot");
         LinkUpdateRequest linkUpdateRequest = LinkUpdateRequest.builder()
-                .tgChatIds(chat.stream().map(Chat::getChatId).toList())
-                .url(link.getUrl().toString())
+                .tgChatIds(chatDTO.stream().map(ChatDTO::getChatId).toList())
+                .url(linkDTO.getUrl().toString())
                 .id(-1L)
                 .description("stub")
                 .build();

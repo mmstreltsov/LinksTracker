@@ -85,8 +85,6 @@ class TrackCommandTest {
         Mockito.doThrow(apiErrorResponse).when(scrapperClient).addLink(Mockito.any(), Mockito.any());
 
 
-        String actual = trackCommand.handle(update);
-
-        Assertions.assertTrue(actual.contains("Unsuccessful"), "Incorrect message: " + actual);
+        Assertions.assertThrows(ApiErrorResponse.class, () -> trackCommand.handle(update));
     }
 }

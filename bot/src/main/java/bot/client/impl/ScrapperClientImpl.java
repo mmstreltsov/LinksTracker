@@ -9,7 +9,6 @@ import bot.client.dto.RemoveLinkRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -30,10 +29,9 @@ public class ScrapperClientImpl implements ScrapperClient {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, r -> r.bodyToMono(ApiErrorResponse.class))
+                .onStatus(HttpStatusCode::is5xxServerError, r -> r.bodyToMono(ApiErrorResponse.class))
                 .toEntity(Object.class)
                 .block();
-
-        handleBadResponse(response);
     }
 
     @Override
@@ -43,10 +41,9 @@ public class ScrapperClientImpl implements ScrapperClient {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, r -> r.bodyToMono(ApiErrorResponse.class))
+                .onStatus(HttpStatusCode::is5xxServerError, r -> r.bodyToMono(ApiErrorResponse.class))
                 .toEntity(Object.class)
                 .block();
-
-        handleBadResponse(response);
     }
 
     @Override
@@ -57,10 +54,9 @@ public class ScrapperClientImpl implements ScrapperClient {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, r -> r.bodyToMono(ApiErrorResponse.class))
+                .onStatus(HttpStatusCode::is5xxServerError, r -> r.bodyToMono(ApiErrorResponse.class))
                 .toEntity(ListLinksResponse.class)
                 .block();
-
-        handleBadResponse(response);
 
         return response.getBody();
     }
@@ -78,10 +74,9 @@ public class ScrapperClientImpl implements ScrapperClient {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, r -> r.bodyToMono(ApiErrorResponse.class))
+                .onStatus(HttpStatusCode::is5xxServerError, r -> r.bodyToMono(ApiErrorResponse.class))
                 .toEntity(LinkResponse.class)
                 .block();
-
-        handleBadResponse(response);
 
         return response.getBody();
     }
@@ -102,17 +97,10 @@ public class ScrapperClientImpl implements ScrapperClient {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, r -> r.bodyToMono(ApiErrorResponse.class))
+                .onStatus(HttpStatusCode::is5xxServerError, r -> r.bodyToMono(ApiErrorResponse.class))
                 .toEntity(LinkResponse.class)
                 .block();
 
-        handleBadResponse(response);
-
         return response.getBody();
-    }
-
-    private void handleBadResponse(ResponseEntity<?> response) {
-        if (response == null || !response.getStatusCode().is2xxSuccessful()) {
-            throw new IllegalStateException("Invalid request");
-        }
     }
 }

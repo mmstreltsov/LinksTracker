@@ -33,7 +33,7 @@ class GithubInfoTest {
                 .service(ServiceNames.STACKOVERFLOW)
                 .build();
 
-        Assertions.assertThrows(IllegalStateException.class, () -> githubInfo.getInfo(response));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> githubInfo.getInfo(response));
     }
 
     @Test
@@ -44,7 +44,7 @@ class GithubInfoTest {
                 .value("null")
                 .build();
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> githubInfo.getInfo(response));
+        Assertions.assertThrows(IllegalStateException.class, () -> githubInfo.getInfo(response));
     }
 
     @Test
@@ -55,7 +55,7 @@ class GithubInfoTest {
                 .value("null")
                 .build();
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> githubInfo.getInfo(response));
+        Assertions.assertThrows(IllegalStateException.class, () -> githubInfo.getInfo(response));
     }
 
     @Test

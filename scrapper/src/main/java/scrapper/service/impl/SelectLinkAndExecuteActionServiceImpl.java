@@ -1,30 +1,35 @@
 package scrapper.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import scrapper.model.LinkStorageService;
-import scrapper.model.entity.Link;
+import scrapper.model.dto.LinkDTO;
 import scrapper.service.SelectLinkAndExecuteActionService;
 import scrapper.service.UpdateAndSendLinkService;
 
-import java.time.Duration;
-import java.time.OffsetDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ExecutorService;
-import java.util.stream.Stream;
 
 
 @Slf4j
 @Service
+@Transactional
 public class SelectLinkAndExecuteActionServiceImpl implements SelectLinkAndExecuteActionService {
     private final LinkStorageService linkStorageService;
     private final UpdateAndSendLinkService updateAndSendLinkService;
     private final ExecutorService executorServiceForLinkHandle;
-    private final Duration waitingTimeToRepeatSameRequest = Duration.ofMinutes(5);
+    private final WaitingTimeToRepeatSameRequest duration = new WaitingTimeToRepeatSameRequest(5, ChronoUnit.MINUTES);
 
-    public SelectLinkAndExecuteActionServiceImpl(LinkStorageService linkStorageService, UpdateAndSendLinkService updateAndSendLinkService,
+    private record WaitingTimeToRepeatSameRequest(int amount, ChronoUnit unit) {
+    }
+
+    public SelectLinkAndExecuteActionServiceImpl(LinkStorageService linkStorageService,
+                                                 UpdateAndSendLinkService updateAndSendLinkService,
                                                  @Qualifier("executorServiceForLinkHandle") ExecutorService executorServiceForLinkHandle) {
         this.linkStorageService = linkStorageService;
         this.updateAndSendLinkService = updateAndSendLinkService;
@@ -33,17 +38,23 @@ public class SelectLinkAndExecuteActionServiceImpl implements SelectLinkAndExecu
 
     @Override
     public void execute() {
-        filteredLinks().forEach(
-                it -> executorServiceForLinkHandle.submit(() -> updateAndSendLinkService.handle(it))
-        );
-    }
+        int size = 501;
+        int page = 0, totalPage;
 
-    private Stream<Link> filteredLinks() {
-        Set<String> uniqueUrls = new HashSet<>();
+        do {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<LinkDTO> linksPage = linkStorageService.findUniqueUrlWhatNotCheckedForALongTime(duration.amount, duration.unit, pageable);
+            if (linksPage == null) {
+                return;
+            }
+            totalPage = linksPage.getTotalPages();
 
-        return linkStorageService.findLinksWithCheckedFieldLessThenGiven(OffsetDateTime.now().minus(waitingTimeToRepeatSameRequest))
-                .stream()
-                .filter(it -> uniqueUrls.add(it.getUrl().toString()));
+            linksPage.getContent().forEach(it -> {
+                executorServiceForLinkHandle.execute(() -> updateAndSendLinkService.handle(it));
+            });
+
+            page++;
+        } while (page < totalPage);
     }
 }
 

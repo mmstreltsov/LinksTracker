@@ -85,8 +85,6 @@ class UntrackCommandTest {
         Mockito.doThrow(apiErrorResponse).when(scrapperClient).removeLink(Mockito.any(), Mockito.any());
 
 
-        String actual = untrackCommand.handle(update);
-
-        Assertions.assertTrue(actual.contains("Unsuccessful"), "Incorrect message: " + actual);
+        Assertions.assertThrows(ApiErrorResponse.class, () -> untrackCommand.handle(update));
     }
 }

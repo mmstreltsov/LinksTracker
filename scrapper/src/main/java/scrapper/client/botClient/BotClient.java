@@ -1,10 +1,10 @@
 package scrapper.client.botClient;
 
-import scrapper.model.entity.Chat;
-import scrapper.model.entity.Link;
+import scrapper.model.dto.ChatDTO;
+import scrapper.model.dto.LinkDTO;
 
 import java.util.List;
 
 public interface BotClient {
-    void updateLink(List<Chat> chat, Link link);
+    void updateLink(List<ChatDTO> chatDTO, LinkDTO linkDTO);
 }

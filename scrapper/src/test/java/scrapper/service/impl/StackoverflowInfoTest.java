@@ -33,7 +33,7 @@ class StackoverflowInfoTest {
                 .service(ServiceNames.GITHUB)
                 .build();
 
-        Assertions.assertThrows(IllegalStateException.class, () -> stackoverflowInfo.getInfo(response));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> stackoverflowInfo.getInfo(response));
     }
 
     @Test
@@ -44,7 +44,7 @@ class StackoverflowInfoTest {
                 .value("null")
                 .build();
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> stackoverflowInfo.getInfo(response));
+        Assertions.assertThrows(IllegalStateException.class, () -> stackoverflowInfo.getInfo(response));
     }
 
     @Test

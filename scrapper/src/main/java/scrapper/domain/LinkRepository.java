@@ -1,24 +1,20 @@
 package scrapper.domain;
 
-import scrapper.model.entity.Link;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import scrapper.domain.entity.Link;
 
-import java.time.OffsetDateTime;
-import java.util.List;
+import java.time.temporal.TemporalUnit;
 
 public interface LinkRepository {
-    Long addLinkAndGetID(Link link);
-
-    void removeLink(Link link);
-
-    List<Link> findAll();
+    Link add(Link link);
+    Link update(Link link);
 
     Link findById(Long id);
+    Link findByUlrAndChatId(String ulr, Long chatId);
 
-    List<Link> findAllByUrl(String url);
+    Page<Link> findAllByUrl(String url, Pageable pageable);
+    Page<Link> findUniqueUrlWhatNotCheckedForALongTime(int amount, TemporalUnit temporalUnit, Pageable pageable);
 
-    void updateCheckField(Link link);
-
-    void updateUpdateField(Link link);
-
-    List<Link> findLinksWithCheckedFieldLessThenGiven(OffsetDateTime time);
+    void remove(Link link);
 }

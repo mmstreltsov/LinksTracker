@@ -2,17 +2,19 @@ package scrapper.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import scrapper.client.botClient.BotClient;
 import scrapper.model.ChatStorageService;
 import scrapper.model.LinkStorageService;
-import scrapper.model.entity.Chat;
-import scrapper.model.entity.Link;
+import scrapper.model.dto.ChatDTO;
+import scrapper.model.dto.LinkDTO;
 import scrapper.service.GetResponseFromAnyHost;
 import scrapper.service.UpdateAndSendLinkService;
 import scrapper.service.dto.LastUpdatedDTO;
 
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 @Slf4j
@@ -24,8 +26,10 @@ public class UpdateAndSendLinkServiceImpl implements UpdateAndSendLinkService {
     private final ChatStorageService chatStorageService;
     private final ExecutorService executorServiceForFutureTasks;
 
-    public UpdateAndSendLinkServiceImpl(GetResponseFromAnyHost checkInfo, BotClient botClient,
-                                        LinkStorageService linkStorageService, ChatStorageService chatStorageService,
+    public UpdateAndSendLinkServiceImpl(GetResponseFromAnyHost checkInfo,
+                                        BotClient botClient,
+                                        LinkStorageService linkStorageService,
+                                        ChatStorageService chatStorageService,
                                         @Qualifier("executorServiceForFutureTasks") ExecutorService executorServiceForFutureTasks) {
         this.checkInfo = checkInfo;
         this.botClient = botClient;
@@ -35,30 +39,40 @@ public class UpdateAndSendLinkServiceImpl implements UpdateAndSendLinkService {
     }
 
 
-    public void handle(Link link) {
-        log.info("Get link: " + link.getUrl().toString());
-        executorServiceForFutureTasks.submit(() -> linkStorageService.setCheckFieldToNow(link));
+    public void handle(LinkDTO linkDTO) {
+        log.info("Get link: " + linkDTO.getUrl());
+        executorServiceForFutureTasks.submit(() -> linkStorageService.setCheckFieldToNowForEveryLinkWithUrl(linkDTO));
 
         LastUpdatedDTO response;
         try {
-            response = checkInfo.getResponse(link.getUrl().toString());
+            response = checkInfo.getResponse(linkDTO.getUrl());
         } catch (Throwable ignored) {
             return;
         }
-        log.info("Link parsed: " + link.getUrl().toString());
+        log.info("Link parsed: " + linkDTO.getUrl());
 
-        if (!isLinkUpdated(link, response)) {
+        if (!isLinkUpdated(linkDTO, response)) {
             return;
         }
 
-        List<Chat> chats = chatStorageService.findAllChatsByCurrentUrl(link.getUrl().toString());
-        log.info("Get chats: " + chats);
-        executorServiceForFutureTasks.submit(() -> botClient.updateLink(chats, link));
-        executorServiceForFutureTasks.submit(() -> linkStorageService.setUpdateFieldToNow(link));
+        int size = 501;
+        int page = 0, totalPage;
+        do {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<ChatDTO> chats = chatStorageService.findAllChatsByCurrentUrl(linkDTO.getUrl(), pageable);
+            totalPage = chats.getTotalPages();
+
+            log.info("Get chats: " + chats.getContent());
+
+            executorServiceForFutureTasks.submit(() -> botClient.updateLink(chats.getContent(), linkDTO));
+            executorServiceForFutureTasks.submit(() -> linkStorageService.setUpdateFieldToValueForEveryLinkWithUrl(linkDTO, response.getUpdatedAt()));
+
+            page++;
+        } while (page < totalPage);
     }
 
-    private boolean isLinkUpdated(Link link, LastUpdatedDTO lastUpdatedDTO) {
+    private boolean isLinkUpdated(LinkDTO linkDTO, LastUpdatedDTO lastUpdatedDTO) {
         return lastUpdatedDTO.getUpdatedAt()
-                .isAfter(link.getUpdatedAt().plusSeconds(3));
+                .isAfter(linkDTO.getUpdatedAt().plusSeconds(3));
     }
 }

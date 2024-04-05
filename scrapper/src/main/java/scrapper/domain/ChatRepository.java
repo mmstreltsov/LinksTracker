@@ -1,24 +1,16 @@
 package scrapper.domain;
 
-import scrapper.model.entity.Chat;
-import scrapper.model.entity.Link;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import scrapper.domain.entity.Chat;
 
 public interface ChatRepository {
-    Long addChatAndGetID(Chat chat);
+    Chat add(Chat chat);
+    Chat update(Chat chat);
 
-    void removeChatById(Long id);
+    Chat findById(Long id);
+    Chat findByChatId(Long chatId);
+    void remove(Chat chat);
 
-    void removeEveryChatByChatId(Chat chat);
-
-    List<Chat> findAll();
-
-    List<Chat> findAllByChatId(Long chatId);
-
-    List<Chat> findAllByCurrentLinkUrl(String url);
-
-    Chat findChatByChatIdAndLinkId(Long chatId, Long linkId);
-
-    List<Link> findAllLinksByChatId(Long chatId);
+    Page<Chat> findAllChatWhatLinkUrlIs(String url, Pageable pageable);
 }

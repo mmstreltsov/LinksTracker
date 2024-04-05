@@ -1,20 +1,17 @@
 package scrapper.model;
 
-import scrapper.model.entity.Chat;
-import scrapper.model.entity.Link;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import scrapper.model.dto.ChatDTO;
+import scrapper.model.dto.LinkDTO;
 
 import java.util.List;
 
 public interface ChatStorageService {
-    Chat addUser(Chat chat);
+    void addChat(ChatDTO chatDTO);
 
-    void removeUser(Long chatId);
+    void removeChat(ChatDTO chatDTO);
 
-    void removeByChatIdAndLinkId(Long chatId, Long linkId);
-
-    List<Chat> findAllChatsByChatId(Long id);
-
-    List<Chat> findAllChatsByCurrentUrl(String url);
-
-    List<Link> findAllLinksByChatId(Long id);
+    Page<ChatDTO> findAllChatsByCurrentUrl(String url, Pageable pageable);
+    List<LinkDTO> findAllLinksByChatId(Long chatId);
 }
