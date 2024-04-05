@@ -1,8 +1,11 @@
 package scrapper.model.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import scrapper.controllers.errors.ClientException;
 import scrapper.domain.ChatRepository;
 import scrapper.domain.entity.Chat;
 import scrapper.domain.entity.Link;
@@ -27,7 +30,19 @@ public class ChatStorageServiceImpl implements ChatStorageService {
 
     @Override
     public void addChat(ChatDTO chatDTO) {
+        verifyChat(chatDTO);
         chatRepository.add(mapper.getChat(chatDTO));
+    }
+
+    private void verifyChat(ChatDTO chatDTO) {
+        Chat chat = null;
+        try {
+            chat = chatRepository.findByChatId(chatDTO.getChatId());
+        } catch (EntityNotFoundException ignored) {}
+
+        if (chat != null) {
+            throw new ClientException(HttpStatus.BAD_REQUEST.value(), "You are already registered");
+        }
     }
 
     @Override
@@ -43,10 +58,16 @@ public class ChatStorageServiceImpl implements ChatStorageService {
 
     @Override
     public List<LinkDTO> findAllLinksByChatId(Long chatId) {
-        List<Link> links = chatRepository.findByChatId(chatId).getLinks();
+        Chat chat = chatRepository.findByChatId(chatId);
+
+        if (chat == null) {
+            throw new ClientException(HttpStatus.BAD_REQUEST.value(), "You are not registered");
+        }
+
+        List<Link> links = chat.getLinks();
         if (links != null) {
             return links.stream().map(mapper::getLinkDto).toList();
         }
-        return null;
+        throw new ClientException(HttpStatus.BAD_REQUEST.value(), "No tracked links found");
     }
 }

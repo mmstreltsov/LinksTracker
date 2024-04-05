@@ -12,7 +12,7 @@ public interface LinkStorageService {
 
     void removeLink(LinkDTO linkDTO);
 
-    void setCheckFieldToNow(LinkDTO linkDTO);
-    void setUpdateFieldToValue(LinkDTO linkDTO, OffsetDateTime time);
+    void setCheckFieldToNowForEveryLinkWithUrl(LinkDTO linkDTO);
+    void setUpdateFieldToValueForEveryLinkWithUrl(LinkDTO linkDTO, OffsetDateTime time);
     Page<LinkDTO> findUniqueUrlWhatNotCheckedForALongTime(int amount, TemporalUnit temporalUnit, Pageable pageable);
 }

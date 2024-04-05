@@ -45,7 +45,7 @@ class LinkStorageServiceImplTest {
         ChatDTO chatDTO = new ChatDTO(1L);
         LinkDTO linkDTO = new LinkDTO("a", OffsetDateTime.MIN, chatDTO);
 
-        Mockito.when(chatRepository.findById(Mockito.anyLong()))
+        Mockito.when(chatRepository.findByChatId(Mockito.anyLong()))
                 .thenReturn(null);
 
         Assertions.assertThrows(ClientException.class, () -> linkStorageService.addLink(linkDTO));
@@ -58,7 +58,7 @@ class LinkStorageServiceImplTest {
 
         Chat chat = Mockito.mock(Chat.class);
         List list = Mockito.mock(List.class);
-        Mockito.when(chatRepository.findById(Mockito.anyLong()))
+        Mockito.when(chatRepository.findByChatId(Mockito.anyLong()))
                 .thenReturn(chat);
         Mockito.when(chat.getLinks())
                 .thenReturn(list);
@@ -79,7 +79,7 @@ class LinkStorageServiceImplTest {
 
         Chat chat = new Chat();
         chat.setLinks(new ArrayList<>());
-        Mockito.when(chatRepository.findById(Mockito.anyLong()))
+        Mockito.when(chatRepository.findByChatId(Mockito.anyLong()))
                 .thenReturn(chat);
 
         Assertions.assertThrows(ClientException.class, () -> linkStorageService.addLink(linkDTO));
@@ -92,7 +92,7 @@ class LinkStorageServiceImplTest {
 
         Chat chat = new Chat();
         chat.setLinks(new ArrayList<>());
-        Mockito.when(chatRepository.findById(Mockito.anyLong()))
+        Mockito.when(chatRepository.findByChatId(Mockito.anyLong()))
                 .thenReturn(chat);
 
         Assertions.assertThrows(ClientException.class, () -> linkStorageService.addLink(linkDTO));
@@ -105,7 +105,7 @@ class LinkStorageServiceImplTest {
 
         Chat chat = new Chat();
         chat.setLinks(new ArrayList<>());
-        Mockito.when(chatRepository.findById(Mockito.anyLong()))
+        Mockito.when(chatRepository.findByChatId(Mockito.anyLong()))
                 .thenReturn(chat);
 
         linkStorageService.addLink(linkDTO);
@@ -130,15 +130,15 @@ class LinkStorageServiceImplTest {
     }
 
     @Test
-    void setCheckFieldToNow_testCorrectLogic() {
+    void setCheckFieldToNowForEveryLinkWithUrl_testCorrectLogic() {
         ChatDTO chatDTO = new ChatDTO(1L);
         LinkDTO linkDTO = new LinkDTO("ahaha", OffsetDateTime.MIN, chatDTO);
 
         Link link = Mockito.mock(Link.class);
-        Mockito.when(linkRepository.findByUlrAndChatId(Mockito.anyString(), Mockito.anyLong()))
-                .thenReturn(link);
+        Mockito.when(linkRepository.findAllByUrl(Mockito.anyString(), Mockito.any()))
+                .thenReturn(new PageImpl<>(new ArrayList<>(List.of(link)), PageRequest.of(0, 1), 1));
 
-        linkStorageService.setCheckFieldToNow(linkDTO);
+        linkStorageService.setCheckFieldToNowForEveryLinkWithUrl(linkDTO);
 
         Mockito.verify(link, Mockito.times(1))
                 .setCheckedAt(Mockito.any(OffsetDateTime.class));
@@ -147,22 +147,47 @@ class LinkStorageServiceImplTest {
     }
 
     @Test
-    void setUpdateFieldToValue_testCorrectLogic() {
+    void setCheckFieldToNowForEveryLinkWithUrl_testMultipleLink() {
         ChatDTO chatDTO = new ChatDTO(1L);
         LinkDTO linkDTO = new LinkDTO("ahaha", OffsetDateTime.MIN, chatDTO);
 
         Link link = Mockito.mock(Link.class);
-        Mockito.when(linkRepository.findByUlrAndChatId(Mockito.anyString(), Mockito.anyLong()))
-                .thenReturn(link);
 
-        OffsetDateTime time = OffsetDateTime.now().minusMinutes(55);
-        linkStorageService.setUpdateFieldToValue(linkDTO, time);
+        List<Link> list = new ArrayList<>();
+        int size = 10;
+        for (int i = 0; i < size; i++) {
+            list.add(link);
+        }
+
+        Mockito.when(linkRepository.findAllByUrl(Mockito.anyString(), Mockito.any()))
+                .thenReturn(new PageImpl<>(list, PageRequest.of(0, size), size));
+
+        linkStorageService.setCheckFieldToNowForEveryLinkWithUrl(linkDTO);
+
+        Mockito.verify(link, Mockito.times(size))
+                .setCheckedAt(Mockito.any(OffsetDateTime.class));
+        Mockito.verify(linkRepository, Mockito.times(size))
+                .update(ArgumentMatchers.eq(link));
+    }
+
+    @Test
+    void setUpdateFieldToValueForEveryLinkWithUrl_testCorrectLogic() {
+        ChatDTO chatDTO = new ChatDTO(1L);
+        LinkDTO linkDTO = new LinkDTO("ahaha", OffsetDateTime.MIN, chatDTO);
+
+        Link link = Mockito.mock(Link.class);
+        Mockito.when(linkRepository.findAllByUrl(Mockito.anyString(), Mockito.any()))
+                .thenReturn(new PageImpl<>(new ArrayList<>(List.of(link)), PageRequest.of(0, 1), 1));
+
+        OffsetDateTime time = OffsetDateTime.now();
+        linkStorageService.setUpdateFieldToValueForEveryLinkWithUrl(linkDTO, time);
 
         Mockito.verify(link, Mockito.times(1))
                 .setUpdatedAt(ArgumentMatchers.eq(time));
         Mockito.verify(linkRepository, Mockito.times(1))
                 .update(ArgumentMatchers.eq(link));
     }
+
 
     @Test
     void findLinksCheckedFieldLessThenGivenAndUniqueUrl_testCorrectLogic() {

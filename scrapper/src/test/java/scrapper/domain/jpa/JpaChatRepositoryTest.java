@@ -1,7 +1,9 @@
 package scrapper.domain.jpa;
 
 import dataBaseTests.IntegrationEnvironment;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,9 @@ public class JpaChatRepositoryTest extends IntegrationEnvironment {
 
     @Autowired
     private JpaLinkRepository jpaLinkRepository;
+
+    @PersistenceContext
+    private EntityManager em;
 
     @Test
     @Transactional
@@ -104,16 +109,29 @@ public class JpaChatRepositoryTest extends IntegrationEnvironment {
         int size = 50;
         for (int i = 0; i < size; ++i) {
             Link link = new Link();
-            link.setChat(chat);
+            link.setChat(excepted);
             link.setUrl("ahahahhahaaaa");
 
             jpaLinkRepository.add(link);
         }
 
         Chat actual = jpaChatRepository.findById(excepted.getId());
+        System.out.println(actual);
 
         Assertions.assertNotNull(actual.getLinks());
         Assertions.assertEquals(size, actual.getLinks().size());
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void findById_NoResults() {
+        Chat chat = new Chat();
+        chat.setChatId(123L);
+        jpaChatRepository.add(chat);
+
+        Chat actual = jpaChatRepository.findByChatId(-1L);
+        Assertions.assertNull(actual);
     }
 
     @Test
@@ -132,6 +150,42 @@ public class JpaChatRepositoryTest extends IntegrationEnvironment {
                 () -> Assertions.assertEquals(excepted.getId(), actual.getId()),
                 () -> Assertions.assertEquals(excepted.getChatId(), actual.getChatId())
         );
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void findByChatId_NoResults() {
+        Chat chat = new Chat();
+        chat.setChatId(123L);
+        jpaChatRepository.add(chat);
+
+        Chat actual = jpaChatRepository.findByChatId(-1L);
+        Assertions.assertNull(actual);
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void findByChatId_testLinksAreCorrect() {
+        Chat chat = new Chat();
+        chat.setChatId(123L);
+        Chat excepted = jpaChatRepository.add(chat);
+
+        int size = 50;
+        for (int i = 0; i < size; ++i) {
+            Link link = new Link();
+            link.setChat(excepted);
+            link.setUrl("ahahahhahaaaa");
+
+            jpaLinkRepository.add(link);
+        }
+
+        Chat actual = jpaChatRepository.findByChatId(excepted.getChatId());
+        System.out.println(actual);
+
+        Assertions.assertNotNull(actual.getLinks());
+        Assertions.assertEquals(size, actual.getLinks().size());
     }
 
     @Test

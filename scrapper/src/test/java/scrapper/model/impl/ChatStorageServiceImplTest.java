@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import scrapper.controllers.errors.ClientException;
 import scrapper.domain.ChatRepository;
 import scrapper.domain.entity.Chat;
 import scrapper.domain.entity.Link;
@@ -112,9 +113,7 @@ class ChatStorageServiceImplTest {
         Mockito.when(chatRepository.findByChatId(Mockito.anyLong()))
                 .thenReturn(chat);
 
-        List<LinkDTO> actual = chatStorageService.findAllLinksByChatId(1L);
-
-        Assertions.assertNull(actual);
+        Assertions.assertThrows(ClientException.class, () -> chatStorageService.findAllLinksByChatId(1L));
 
         Mockito.verify(chatRepository, Mockito.times(1))
                 .findByChatId(Mockito.anyLong());

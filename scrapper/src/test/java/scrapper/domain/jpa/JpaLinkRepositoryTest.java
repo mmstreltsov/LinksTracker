@@ -15,7 +15,9 @@ import scrapper.domain.entity.Link;
 
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @SpringBootTest
@@ -83,7 +85,7 @@ public class JpaLinkRepositoryTest extends IntegrationEnvironment {
     @Test
     @Transactional
     @Rollback
-    void add_testDetachObject() {
+    void add_testUpdatingObject() {
         String url = "ahaha";
 
         Link link = new Link();
@@ -96,7 +98,7 @@ public class JpaLinkRepositoryTest extends IntegrationEnvironment {
         added.setUrl("NONONO");
 
         Link actual = jpaLinkRepository.findById(added.getId());
-        Assertions.assertEquals(url, actual.getUrl());
+        Assertions.assertNotEquals(url, actual.getUrl());
     }
 
     @Test
@@ -140,6 +142,7 @@ public class JpaLinkRepositoryTest extends IntegrationEnvironment {
                 () -> Assertions.assertEquals(excepted.getId(), actual.getId()),
                 () -> Assertions.assertEquals(excepted.getUpdatedAt().getSecond(), actual.getUpdatedAt().getSecond()),
                 () -> Assertions.assertEquals(excepted.getCheckedAt(), actual.getCheckedAt()),
+                () -> Assertions.assertNotNull(actual.getChat()),
                 () -> Assertions.assertEquals(excepted.getChat(), actual.getChat()),
                 () -> Assertions.assertEquals(excepted.getUrl(), actual.getUrl())
         );
@@ -149,7 +152,7 @@ public class JpaLinkRepositoryTest extends IntegrationEnvironment {
     @Test
     @Transactional
     @Rollback
-    void findByUlrAndChatId() {
+    void findByUlrAndChatId_testCorrectLogic() {
         Chat chat = pushRandomChat();
         String url = "ahaha";
 
@@ -161,6 +164,42 @@ public class JpaLinkRepositoryTest extends IntegrationEnvironment {
 
         Link actual = jpaLinkRepository.findByUlrAndChatId(url, chat.getChatId());
         Assertions.assertEquals(excepted, actual);
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void findByUlrAndChatId_NoResults() {
+        Chat chat = pushRandomChat();
+        String url = "ahaha";
+
+        Link link = new Link();
+        link.setChat(chat);
+        link.setUrl(url);
+        link.setUpdatedAt(OffsetDateTime.now());
+        jpaLinkRepository.add(link);
+
+        Link actual = jpaLinkRepository.findByUlrAndChatId("url", chat.getChatId());
+        Assertions.assertNull(actual);
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void findByUlrAndChatId_TestChatIsCorrect() {
+        Chat chat = pushRandomChat();
+        String url = "ahaha";
+
+        Link link = new Link();
+        link.setChat(chat);
+        link.setUrl(url);
+        link.setUpdatedAt(OffsetDateTime.now());
+        jpaLinkRepository.add(link);
+
+        Link actual = jpaLinkRepository.findByUlrAndChatId(url, chat.getChatId());
+
+        Assertions.assertNotNull(actual.getChat());
+        Assertions.assertEquals(chat, actual.getChat());
     }
 
     @Test

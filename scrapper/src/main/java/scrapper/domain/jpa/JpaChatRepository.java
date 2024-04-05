@@ -1,6 +1,7 @@
 package scrapper.domain.jpa;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -23,6 +24,7 @@ public class JpaChatRepository implements ChatRepository {
     public Chat add(Chat chat) {
         entityManager.persist(chat);
         entityManager.flush();
+        entityManager.detach(chat);
         return chat;
     }
 
@@ -39,10 +41,13 @@ public class JpaChatRepository implements ChatRepository {
 
     @Override
     public Chat findByChatId(Long chatId) {
-        return entityManager.createQuery("SELECT c FROM Chat c WHERE c.chatId = ?1", Chat.class)
-                .setParameter(1, chatId)
-                .getResultList()
-                .get(0);
+        try {
+            return entityManager.createQuery("SELECT c FROM Chat c WHERE c.chatId = ?1", Chat.class)
+                    .setParameter(1, chatId)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     @Override

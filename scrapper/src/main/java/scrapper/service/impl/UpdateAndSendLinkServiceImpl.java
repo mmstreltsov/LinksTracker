@@ -41,7 +41,7 @@ public class UpdateAndSendLinkServiceImpl implements UpdateAndSendLinkService {
 
     public void handle(LinkDTO linkDTO) {
         log.info("Get link: " + linkDTO.getUrl());
-        executorServiceForFutureTasks.submit(() -> linkStorageService.setCheckFieldToNow(linkDTO));
+        executorServiceForFutureTasks.submit(() -> linkStorageService.setCheckFieldToNowForEveryLinkWithUrl(linkDTO));
 
         LastUpdatedDTO response;
         try {
@@ -65,7 +65,7 @@ public class UpdateAndSendLinkServiceImpl implements UpdateAndSendLinkService {
             log.info("Get chats: " + chats.getContent());
 
             executorServiceForFutureTasks.submit(() -> botClient.updateLink(chats.getContent(), linkDTO));
-            executorServiceForFutureTasks.submit(() -> linkStorageService.setUpdateFieldToValue(linkDTO, response.getUpdatedAt()));
+            executorServiceForFutureTasks.submit(() -> linkStorageService.setUpdateFieldToValueForEveryLinkWithUrl(linkDTO, response.getUpdatedAt()));
 
             page++;
         } while (page < totalPage);

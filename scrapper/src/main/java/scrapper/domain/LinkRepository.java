@@ -2,7 +2,6 @@ package scrapper.domain;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import scrapper.domain.entity.Chat;
 import scrapper.domain.entity.Link;
 
 import java.time.temporal.TemporalUnit;

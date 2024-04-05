@@ -1,6 +1,7 @@
 package scrapper.domain.jpa;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -25,6 +26,9 @@ public class JpaLinkRepository implements LinkRepository {
         if (link.getUpdatedAt() == null) {
             link.setUpdatedAt(OffsetDateTime.now());
         }
+        if (link.getCheckedAt() == null) {
+            link.setCheckedAt(OffsetDateTime.now());
+        }
 
         entityManager.persist(link);
         entityManager.flush();
@@ -39,15 +43,23 @@ public class JpaLinkRepository implements LinkRepository {
 
     @Override
     public Link findById(Long id) {
-        return entityManager.getReference(Link.class, id);
+        try {
+            return entityManager.getReference(Link.class, id);
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     @Override
     public Link findByUlrAndChatId(String ulr, Long chatId) {
-        return entityManager.createQuery("select l FROM Link l WHERE l.url = ?1 and l.chat.chatId = ?2", Link.class)
-                .setParameter(1, ulr)
-                .setParameter(2, chatId)
-                .getSingleResult();
+        try {
+            return entityManager.createQuery("select l FROM Link l WHERE l.url = ?1 and l.chat.chatId = ?2", Link.class)
+                    .setParameter(1, ulr)
+                    .setParameter(2, chatId)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     public List<Link> findAll() {

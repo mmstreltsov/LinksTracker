@@ -3,6 +3,7 @@ package scrapper.model.impl;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import scrapper.model.dto.MapperEntityWithDTO;
 
 import java.time.OffsetDateTime;
 import java.time.temporal.TemporalUnit;
+import java.util.function.Consumer;
 
 @Service
 @Slf4j
@@ -79,17 +81,30 @@ public class LinkStorageServiceImpl implements LinkStorageService {
     }
 
     @Override
-    public void setCheckFieldToNow(LinkDTO linkDTO) {
-        Link link = linkRepository.findByUlrAndChatId(linkDTO.getUrl(), linkDTO.getChat().getChatId());
-        link.setCheckedAt(OffsetDateTime.now());
-        linkRepository.update(link);
+    public void setCheckFieldToNowForEveryLinkWithUrl(LinkDTO linkDTO) {
+        makeChangeForEveryLinkWithUrl(linkDTO, (l) -> l.setCheckedAt(OffsetDateTime.now()));
     }
 
     @Override
-    public void setUpdateFieldToValue(LinkDTO linkDTO, OffsetDateTime time) {
-        Link link = linkRepository.findByUlrAndChatId(linkDTO.getUrl(), linkDTO.getChat().getChatId());
-        link.setUpdatedAt(time);
-        linkRepository.update(link);
+    public void setUpdateFieldToValueForEveryLinkWithUrl(LinkDTO linkDTO, OffsetDateTime time) {
+        makeChangeForEveryLinkWithUrl(linkDTO, (l) -> l.setUpdatedAt(time));
+    }
+
+    private void makeChangeForEveryLinkWithUrl(LinkDTO linkDTO, Consumer<Link> func) {
+        int page = 0, totalPage;
+        int size = 501;
+        do {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<Link> links = linkRepository.findAllByUrl(linkDTO.getUrl(), pageable);
+            totalPage = links.getTotalPages();
+
+            links.stream().parallel().forEach(link -> {
+                func.accept(link);
+                linkRepository.update(link);
+            });
+
+            page++;
+        } while (page < totalPage);
     }
 
     @Override
