@@ -1,7 +1,9 @@
 package scrapper.client.botClient.impl;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
@@ -26,11 +28,16 @@ public class ScrapperQueueProducerForBotClient implements BotClient {
     private final DirectExchange directExchange;
     private final Queue queue;
 
+    private final ObjectMapper objectMapper;
+
     @Override
+    @SneakyThrows
     public void updateLink(List<ChatDTO> chatDTO, LinkDTO linkDTO) {
         log.info("Sending message to queue");
         LinkUpdateRequest data = dataMapper.getData(chatDTO, linkDTO);
 
-        rabbitTemplate.convertAndSend(directExchange.getName(), queue.getName(), data);
+        String json = objectMapper.writeValueAsString(data);
+
+        rabbitTemplate.convertAndSend(directExchange.getName(), queue.getName(), json);
     }
 }

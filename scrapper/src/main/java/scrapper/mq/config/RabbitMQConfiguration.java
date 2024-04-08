@@ -35,8 +35,8 @@ public class RabbitMQConfiguration {
         return BindingBuilder.bind(queue()).to(directExchange()).with(QUEUE_NAME);
     }
 
-    @Bean
-    public MessageConverter messageConverter() {
-        return new Jackson2JsonMessageConverter();
-    }
+//    @Bean
+//    public MessageConverter messageConverter() {
+//        return new Jackson2JsonMessageConverter();
+//    }
 }

@@ -7,7 +7,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import scrapper.client.botClient.BotClient;
-import scrapper.client.botClient.impl.ScrapperQueueProducerForBotClient;
 import scrapper.model.ChatStorageService;
 import scrapper.model.LinkStorageService;
 import scrapper.model.dto.ChatDTO;
@@ -73,8 +72,7 @@ public class UpdateAndSendLinkServiceImpl implements UpdateAndSendLinkService {
     }
 
     private boolean isLinkUpdated(LinkDTO linkDTO, LastUpdatedDTO lastUpdatedDTO) {
-        return true;
-//        return lastUpdatedDTO.getUpdatedAt()
-//                .isAfter(linkDTO.getUpdatedAt().plusSeconds(3));
+        return lastUpdatedDTO.getUpdatedAt()
+                .isAfter(linkDTO.getUpdatedAt().plusSeconds(3));
     }
 }
