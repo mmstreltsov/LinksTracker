@@ -1,6 +1,7 @@
 package scrapper.client.botClient.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import scrapper.client.botClient.BotClient;
 import scrapper.client.botClient.dto.ApiErrorResponse;
 import scrapper.client.botClient.dto.LinkUpdateRequest;
+import scrapper.client.botClient.impl.utils.GetDataToSend;
 import scrapper.model.dto.ChatDTO;
 import scrapper.model.dto.LinkDTO;
 
@@ -16,9 +18,12 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class BotClientImpl implements BotClient {
+public class BotClientRestImpl implements BotClient {
 
     private final String baseUrl = "http://localhost:8080";
+
+    @Autowired
+    private GetDataToSend dataMapper;
 
     private WebClient webClient() {
         return WebClient.create(baseUrl);
@@ -27,12 +32,7 @@ public class BotClientImpl implements BotClient {
     @Override
     public void updateLink(List<ChatDTO> chatDTO, LinkDTO linkDTO) {
         log.info("Trying to send request to Bot");
-        LinkUpdateRequest linkUpdateRequest = LinkUpdateRequest.builder()
-                .tgChatIds(chatDTO.stream().map(ChatDTO::getChatId).toList())
-                .url(linkDTO.getUrl().toString())
-                .id(-1L)
-                .description("stub")
-                .build();
+        LinkUpdateRequest linkUpdateRequest = dataMapper.getData(chatDTO, linkDTO);
 
         WebClient webClient = webClient();
         webClient.post()
