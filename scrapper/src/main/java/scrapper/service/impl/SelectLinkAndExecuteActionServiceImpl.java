@@ -23,7 +23,7 @@ public class SelectLinkAndExecuteActionServiceImpl implements SelectLinkAndExecu
     private final LinkStorageService linkStorageService;
     private final UpdateAndSendLinkService updateAndSendLinkService;
     private final ExecutorService executorServiceForLinkHandle;
-    private final WaitingTimeToRepeatSameRequest duration = new WaitingTimeToRepeatSameRequest(5, ChronoUnit.MINUTES);
+    private final WaitingTimeToRepeatSameRequest duration = new WaitingTimeToRepeatSameRequest(2, ChronoUnit.MINUTES);
 
     private record WaitingTimeToRepeatSameRequest(int amount, ChronoUnit unit) {
     }

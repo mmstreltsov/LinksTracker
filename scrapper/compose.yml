@@ -34,8 +34,23 @@ services:
     networks:
       - backend
 
+  rabbitmq:
+    image: rabbitmq:management
+    hostname: rabbitmq
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "guest"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq-volume:/var/lib/rabbitmq/
+
+
 volumes:
   postgres-volume:
+  rabbitmq-volume:
 
 networks:
   backend:

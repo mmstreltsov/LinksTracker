@@ -9,7 +9,13 @@ import java.time.Duration;
 
 @Validated
 @ConfigurationProperties(prefix = "app", ignoreInvalidFields = false)
-public record ApplicationConfig(@NotNull String test, @Bean @NotNull Scheduler scheduler) {
+public record ApplicationConfig(@NotNull String test,
+                                @Bean @NotNull Scheduler scheduler,
+                                @Bean String topicNameForMQ,
+                                @Bean String queueNameForMQ,
+                                @Bean String topicNameForMQ_dlq,
+                                @Bean String queueNameForMQ_dlq) {
 
-    public record Scheduler(Duration interval){}
+    public record Scheduler(Duration interval) {
+    }
 }

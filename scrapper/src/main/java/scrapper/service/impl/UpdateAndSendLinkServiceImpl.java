@@ -27,7 +27,7 @@ public class UpdateAndSendLinkServiceImpl implements UpdateAndSendLinkService {
     private final ExecutorService executorServiceForFutureTasks;
 
     public UpdateAndSendLinkServiceImpl(GetResponseFromAnyHost checkInfo,
-                                        BotClient botClient,
+                                        @Qualifier("scrapperQueueProducerForBotClient") BotClient botClient,
                                         LinkStorageService linkStorageService,
                                         ChatStorageService chatStorageService,
                                         @Qualifier("executorServiceForFutureTasks") ExecutorService executorServiceForFutureTasks) {
